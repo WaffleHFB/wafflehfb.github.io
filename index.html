@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waffle News</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            background-color: #ccc;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #999;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            border-radius: 10px;
+        }
+        .sidebar button {
+            margin-bottom: 10px;
+            padding: 10px 20px;
+            border: none;
+            background-color: #444;
+            color: #fff;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            border-radius: 10px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .sidebar button:hover {
+            background-color: #333;
+            transform: translateX(5px);
+        }
+        .content {
+            flex-grow: 1;
+            background-color: #ddd;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 10px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 20px;
+            background-color: #666;
+            color: white;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            border-radius: 10px;
+        }
+        .divider {
+            height: 2px;
+            background-color: #bbb;
+            margin: 10px 0;
+            border-radius: 2px;
+        }
+        .header {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .news-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #bbb;
+            animation: slideIn 0.5s ease-in-out;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .news-text {
+            flex-grow: 1;
+            margin-right: 20px;
+            border-radius: 10px;
+        }
+        .news-text h2 {
+            margin: 0;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .news-text p {
+            margin: 0;
+            font-size: 16px;
+        }
+        .news-image {
+            width: 150px;
+            height: 150px;
+            background-color: #999;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            transition: transform 0.3s;
+        }
+        .news-image:hover {
+            transform: scale(1.1);
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <button onclick="showHome()">▲ 主页</button>
+    <button onclick="showNews()">👁 新事</button>
+	<button onclick="showProjects()">📜 项目</button>
+	<button onclick="showDonet()">🔑 捐赠</button>
+</div>
+
+<div class="content" id="content">
+    <div class="logo">Waffle</div>
+    <div class="divider"></div>
+    <div class="header">Welcome</div>
+</div>
+
+<script>
+    function showHome() {
+        document.getElementById('content').innerHTML = `
+            <div class="logo">Waffle</div>
+            <div class="divider"></div>
+            <div class="header">Welcome To Waffle's Blog</div>`;
+    }
+
+    function showNews() {
+        document.getElementById('content').innerHTML = `
+            <div class="logo">Waffle</div>
+            <div class="divider"></div>
+            <div class="header">News</div>
+            <div class="news-item">
+                <div class="news-text">
+                    <h2>The First News</h2>
+                    <p>text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text</p>
+                </div>
+                <div class="news-image">Image1</div>
+            </div>
+            <div class="news-item">
+                <div class="news-text">
+                    <h2>The Second News</h2>
+                    <p>text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text</p>
+                </div>
+                <div class="news-image">Image2</div>
+            </div>
+            <div class="news-item">
+                <div class="news-text">
+                    <h2>The Third News</h2>
+                    <p>text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text</p>
+                </div>
+                <div class="news-image">Image3</div>
+            </div>
+        `;
+    }
+	
+	function showProjects() {
+	    document.getElementById('content').innerHTML = `
+	        <div class="logo">Waffle</div>
+	        <div class="divider"></div>
+	        <div class="header">My Projects</div>
+			<div class="projects-item">
+			        <div class="projects-text">
+			            <h2>Force Public</h2>
+			            <p>2b2t 1.20.4 Cpvp Client Public Version.</p>
+			        </div>
+			        <div class="news-image">Image1</div>
+					<p3>baidu.com</p3>
+			</div>
+			`;
+	}
+</script>
+
+</body>
+</html>
