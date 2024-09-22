@@ -6,27 +6,27 @@
     <title>Waffle News</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
             height: 100vh;
-            background-color: #ccc;
+            background-color: #f5f5f5;
         }
         .sidebar {
-            width: 200px;
-            background-color: #999;
-            padding: 10px;
+            width: 220px;
+            background-color: #333;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             border-radius: 10px;
         }
         .sidebar button {
-            margin-bottom: 10px;
-            padding: 10px 20px;
+            margin-bottom: 15px;
+            padding: 12px 25px;
             border: none;
-            background-color: #444;
+            background-color: #555;
             color: #fff;
             cursor: pointer;
             width: 100%;
@@ -35,25 +35,25 @@
             transition: background-color 0.3s, transform 0.3s;
         }
         .sidebar button:hover {
-            background-color: #333;
+            background-color: #444;
             transform: translateX(5px);
         }
         .content {
             flex-grow: 1;
-            background-color: #ddd;
+            background-color: #eee;
             overflow-y: auto;
-            padding: 20px;
+            padding: 25px;
             display: flex;
             flex-direction: column;
             border-radius: 10px;
             animation: fadeIn 1s ease-in-out;
         }
         .logo {
-            font-size: 28px;
+            font-size: 30px;
             font-weight: bold;
-            margin-bottom: 10px;
-            padding: 20px;
-            background-color: #666;
+            margin-bottom: 15px;
+            padding: 25px;
+            background-color: #444;
             color: white;
             display: flex;
             justify-content: flex-start;
@@ -61,43 +61,45 @@
             border-radius: 10px;
         }
         .divider {
-            height: 2px;
-            background-color: #bbb;
-            margin: 10px 0;
+            height: 3px;
+            background-color: #ccc;
+            margin: 15px 0;
             border-radius: 2px;
         }
         .header {
-            font-size: 24px;
-            margin-bottom: 20px;
+            font-size: 26px;
+            margin-bottom: 25px;
         }
-        .news-item {
+		        }
+		        .news-text p {
+		            margin: 0;
+		            font-size: 16px;
+		        }
+        .news-item, .projects-item {
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #bbb;
-            animation: slideIn 0.5s ease-in-out;
+            padding: 15px;
+            background-color: #fff;
             border-radius: 10px;
-            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
         }
-        .news-text {
+        .news-item:hover, .projects-item:hover {
+            transform: translateX(10px);
+        }
+        .news-text, .projects-text {
             flex-grow: 1;
             margin-right: 20px;
-            border-radius: 10px;
         }
-        .news-text h2 {
-            margin: 0;
-            font-size: 20px;
+        .news-text h2, .projects-text h2 {
+            font-size: 22px;
             margin-bottom: 10px;
         }
-        .news-text p {
-            margin: 0;
-            font-size: 16px;
-        }
-        .news-image {
+        .news-image, .project-image {
             width: 150px;
             height: 150px;
-            background-color: #999;
+            background-color: #888;
             border-radius: 15px;
             display: flex;
             align-items: center;
@@ -106,7 +108,7 @@
             font-size: 14px;
             transition: transform 0.3s;
         }
-        .news-image:hover {
+        .news-image:hover, .project-image:hover {
             transform: scale(1.1);
         }
         @keyframes fadeIn {
@@ -117,16 +119,6 @@
                 opacity: 1;
             }
         }
-        @keyframes slideIn {
-            from {
-                transform: translateX(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
     </style>
 </head>
 <body>
@@ -134,8 +126,9 @@
 <div class="sidebar">
     <button onclick="showHome()">▲ 主页</button>
     <button onclick="showNews()">👁 新事</button>
-	<button onclick="showProjects()">📜 项目</button>
-	<button onclick="showDonet()">🔑 捐赠</button>
+    <button onclick="showProjects()">📜 项目</button>
+    <button onclick="showDonations()">🔑 捐赠</button>
+    <button onclick="showHWID()">HWID 页面</button>
 </div>
 
 <div class="content" id="content">
@@ -145,6 +138,7 @@
 </div>
 
 <script>
+    // 显示主页
     function showHome() {
         document.getElementById('content').innerHTML = `
             <div class="logo">Waffle</div>
@@ -152,6 +146,7 @@
             <div class="header">Welcome To Waffle's Blog</div>`;
     }
 
+    // 显示新闻
     function showNews() {
         document.getElementById('content').innerHTML = `
             <div class="logo">Waffle</div>
@@ -180,22 +175,63 @@
             </div>
         `;
     }
-	
-	function showProjects() {
-	    document.getElementById('content').innerHTML = `
-	        <div class="logo">Waffle</div>
-	        <div class="divider"></div>
-	        <div class="header">My Projects</div>
-			<div class="projects-item">
-			        <div class="projects-text">
-			            <h2>Force Public</h2>
-			            <p>2b2t 1.20.4 Cpvp Client Public Version.</p>
-			        </div>
-			        <div class="news-image">Image1</div>
-					<p3>baidu.com</p3>
-			</div>
-			`;
-	}
+
+    // 显示项目
+    function showProjects() {
+        document.getElementById('content').innerHTML = `
+            <div class="logo">Waffle</div>
+            <div class="divider"></div>
+            <div class="header">My Projects</div>
+            <div class="projects-item">
+                <div class="projects-text">
+                    <h2>Force Public</h2>
+                    <p>2b2t 1.20.4 Cpvp Client Public Version.</p>
+                </div>
+                <div class="news-image">Image1</div>
+                <p3>baidu.com</p3>
+            </div>`;
+    }
+
+    // 显示捐赠页
+    function showDonations() {
+        document.getElementById('content').innerHTML = `
+            <div class="logo">Waffle</div>
+            <div class="divider"></div>
+            <div class="header">捐赠支持我们</div>
+            <p>感谢您的支持！您可以通过以下比特币地址捐赠：</p>
+            <p><strong>比特币钱包地址：</strong></p>
+            <p style="background-color: #f0f0f0; padding: 10px; border-radius: 5px;">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</p>
+            <p>请确保您通过比特币钱包转账时使用此地址。</p>`;
+    }
+
+    // 显示 HWID 页面
+    function showHWID() {
+        document.getElementById('content').innerHTML = `
+            <div class="logo">Waffle</div>
+            <div class="divider"></div>
+            <div class="header">Force HWID 页面</div>
+            <div id="passwordSection">
+                <p>请输入管理员密码访问此页面：</p>
+                <input type="password" id="password" placeholder="输入密码">
+                <button onclick="checkPassword()">提交</button>
+            </div>
+            <div id="hwidContent" style="display:none;">
+                <p>HWID JSON:</p>
+                <p><strong>HFB_：</strong>ABC-123-XYZ-789</p>
+            </div>`;
+    }
+
+    // 密码验证
+    function checkPassword() {
+        const inputPassword = document.getElementById('password').value;
+        const correctPassword = 'hwidpassword';
+        if (inputPassword === correctPassword) {
+            document.getElementById('hwidContent').style.display = 'block';
+            document.getElementById('passwordSection').style.display = 'none';
+        } else {
+            alert('密码错误，请重试。');
+        }
+    }
 </script>
 
 </body>
