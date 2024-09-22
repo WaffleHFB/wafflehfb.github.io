@@ -128,7 +128,7 @@
     <button onclick="showNews()">👁 新事</button>
     <button onclick="showProjects()">📜 项目</button>
     <button onclick="showDonations()">🔑 捐赠</button>
-    <button onclick="showHWID()">HWID 页面</button>
+    <button onclick="showHWID()">🛡️ ForceHWID</button>
 </div>
 
 <div class="content" id="content">
@@ -138,6 +138,7 @@
 </div>
 
 <script>
+	
     // 显示主页
     function showHome() {
         document.getElementById('content').innerHTML = `
@@ -209,29 +210,35 @@
         document.getElementById('content').innerHTML = `
             <div class="logo">Waffle</div>
             <div class="divider"></div>
-            <div class="header">Force HWID 页面</div>
+            <div class="header">Force HWID Page</div>
             <div id="passwordSection">
-                <p>请输入管理员密码访问此页面：</p>
-                <input type="password" id="password" placeholder="输入密码">
-                <button onclick="checkPassword()">提交</button>
+                <p>Please enter your admin password to access this page：</p>
+                <input type="password" id="password" placeholder="EnterPassword">
+                <button onclick="checkPassword()">Submit</button>
             </div>
             <div id="hwidContent" style="display:none;">
                 <p>HWID JSON:</p>
                 <p><strong>HFB_：</strong>ABC-123-XYZ-789</p>
             </div>`;
     }
-
-    // 密码验证
-    function checkPassword() {
-        const inputPassword = document.getElementById('password').value;
-        const correctPassword = 'hwidpassword';
-        if (inputPassword === correctPassword) {
-            document.getElementById('hwidContent').style.display = 'block';
-            document.getElementById('passwordSection').style.display = 'none';
-        } else {
-            alert('密码错误，请重试。');
-        }
+async function hashPassword(password) {
+    const msgBuffer = new TextEncoder().encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+}
+async function checkPassword() {
+    const inputPassword = document.getElementById('password').value;
+    const hashedInputPassword = await hashPassword(inputPassword);
+    const correctHashedPassword = 'DB8937BE109E03490FB1D889461A670F4592DAB8A648A0449446172349AF57DA';
+    if (hashedInputPassword === correctHashedPassword) {
+        document.getElementById('hwidContent').style.display = 'block';
+        document.getElementById('passwordSection').style.display = 'none';
+    } else {
+        alert('Wrong Password');
     }
+}
 </script>
 
 </body>
