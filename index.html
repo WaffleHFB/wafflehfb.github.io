@@ -560,6 +560,29 @@
         .blog-details .content {
             white-space: pre-wrap;
         }
+		/* 美化删除按钮 */
+		.delete-btn {
+		    background-color: #e74c3c;
+		    color: white;
+		    border: none;
+		    padding: 5px 10px;  /* 缩小按钮的尺寸 */
+		    border-radius: 5px;  /* 圆角 */
+		    cursor: pointer;
+		    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+		    position: absolute;  /* 使按钮能够定位到右边 */
+		    right: 10px;  /* 距离右边的距离 */
+		    top: 10px;  /* 距离顶部的距离 */
+		    font-size: 0.8em;  /* 缩小字体 */
+		}
+		
+		.delete-btn:hover {
+		    background-color: #c0392b;
+		    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+		}
+
+
+
     </style>
 </head>
 <body>
@@ -1027,6 +1050,26 @@
                 postDiv.appendChild(postTitle);
                 postDiv.appendChild(postMeta);
                 postDiv.appendChild(postContent);
+				
+		        // 如果当前用户是作者或管理员，显示删除按钮
+		        if (post.author === currentUser) {
+		            const deleteBtn = document.createElement('button');
+		            deleteBtn.textContent = '删除博客';
+		            deleteBtn.classList.add('delete-btn');  // 使用美化后的样式
+		
+		            // 点击删除按钮时直接删除 DOM 元素，并更新 localStorage
+		            deleteBtn.addEventListener('click', (event) => {
+		                event.stopPropagation();  // 防止事件冒泡，避免误触其他元素
+		                if (confirm('确定要删除这篇博客吗？')) {
+		                    postDiv.remove();  // 从页面中移除该博客元素
+		                    deletePost(index);  // 从 localStorage 中删除该博客
+							loadPosts();
+		                }
+		            });
+		
+		            postDiv.appendChild(deleteBtn);
+		        }
+				
 				const likeBtn = document.createElement('span');
 				likeBtn.innerHTML = `👍 ${post.likes || 0}`;
 				likeBtn.classList.add('like-btn');
@@ -1088,6 +1131,22 @@
                 postsDiv.appendChild(postDiv);
             });
         }
+		
+		function deletePost(index) {
+		    // 从 localStorage 中获取博客数据
+		    let posts = JSON.parse(localStorage.getItem('posts')) || [];
+		
+		    // 删除指定的博客
+		    posts.splice(index, 1);
+		
+		    // 更新 localStorage
+		    localStorage.setItem('posts', JSON.stringify(posts));
+		
+		    // 确认删除
+		    alert('博客已成功删除');
+		}
+
+
 
         // 打开模态框显示博客详情
 		function openModal(postId) {
