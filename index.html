@@ -1,245 +1,1308 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Waffle News</title>
+    <title>Waffle‘s Blog</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
+        /* CSS 变量定义 */
+        :root {
+            --bg-color: #f0f2f5;
+            --text-color: #333;
+            --header-bg: rgba(70, 130, 180, 0.8);
+            --nav-bg: rgba(100, 149, 237, 0.9);
+            --button-bg: #4682B4;
+            --button-hover-bg: #5A9BD5;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* 深色主题变量 */
+        [data-theme="dark"] {
+            --bg-color: #2c3e50;
+            --text-color: #ecf0f1;
+            --header-bg: rgba(44, 62, 80, 0.8);
+            --nav-bg: rgba(41, 128, 185, 0.9);
+            --button-bg: #3498db;
+            --button-hover-bg: #2980b9;
+            --card-bg: rgba(44, 62, 80, 0.9);
+            --shadow: 0 4px 6px rgba(0,0,0,0.5);
+        }
+		[data-theme="dark"] {
+		    --bg-color: #2c3e50;
+		    --text-color: #ecf0f1;
+		    --header-bg: rgba(44, 62, 80, 0.8);
+		    --nav-bg: rgba(41, 128, 185, 0.9);
+		    --button-bg: #3498db;
+		    --button-hover-bg: #2980b9;
+		    --card-bg: rgba(44, 62, 80, 0.9);
+		    --shadow: 0 4px 6px rgba(0,0,0,0.5);
+		}
+		
+		/* 深色模式下的评论区样式 */
+		[data-theme="dark"] .comments-section {
+		    background: rgba(44, 62, 80, 0.9);  /* 深色背景 */
+		    color: #ecf0f1;  /* 浅色文字 */
+		}
+		
+		[data-theme="dark"] .comment {
+		    background: rgba(60, 60, 60, 0.9);  /* 深色评论背景 */
+		    color: #ecf0f1;  /* 浅色文字 */
+		}
+		
+		[data-theme="dark"] #comment-input {
+		    background: rgba(60, 60, 60, 0.9);  /* 深色背景 */
+		    color: #ecf0f1;  /* 浅色文字 */
+		}
+		
+		[data-theme="dark"] #comment-submit {
+		    background-color: #3498db;  /* 评论按钮的深色模式背景色 */
+		    color: #fff;
+		}
+		
+		[data-theme="dark"] #comment-submit:hover {
+		    background-color: #2980b9;  /* 悬浮时的背景色 */
+		}
+
+
+        /* 基本样式 */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            display: flex;
-            height: 100vh;
-            background-color: #f5f5f5;
+            transition: background 0.3s, color 0.3s;
         }
-        .sidebar {
-            width: 220px;
-            background-color: #333;
-            padding: 15px;
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            border-radius: 10px;
         }
-        .sidebar button {
-            margin-bottom: 15px;
-            padding: 12px 25px;
-            border: none;
-            background-color: #555;
+
+        header {
+            background: var(--header-bg);
             color: #fff;
-            cursor: pointer;
-            width: 100%;
-            text-align: left;
-            border-radius: 10px;
-            transition: background-color 0.3s, transform 0.3s;
+            padding: 20px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: var(--shadow);
         }
-        .sidebar button:hover {
-            background-color: #444;
-            transform: translateX(5px);
-        }
-        .content {
-            flex-grow: 1;
-            background-color: #eee;
-            overflow-y: auto;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            border-radius: 10px;
-            animation: fadeIn 1s ease-in-out;
-        }
-        .logo {
-            font-size: 30px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            padding: 25px;
-            background-color: #444;
-            color: white;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            border-radius: 10px;
-        }
-        .divider {
-            height: 3px;
-            background-color: #ccc;
-            margin: 15px 0;
-            border-radius: 2px;
-        }
-        .header {
-            font-size: 26px;
-            margin-bottom: 25px;
-        }
-		        }
-		        .news-text p {
-		            margin: 0;
-		            font-size: 16px;
-		        }
-        .news-item, .projects-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-        .news-item:hover, .projects-item:hover {
-            transform: translateX(10px);
-        }
-        .news-text, .projects-text {
-            flex-grow: 1;
-            margin-right: 20px;
-        }
-        .news-text h2, .projects-text h2 {
-            font-size: 22px;
+
+        header h1 {
+            font-size: 3em;
             margin-bottom: 10px;
         }
-        .news-image, .project-image {
-            width: 150px;
-            height: 150px;
-            background-color: #888;
-            border-radius: 15px;
+
+        header p {
+            font-size: 1.2em;
+        }
+
+        nav {
             display: flex;
-            align-items: center;
             justify-content: center;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+        }
+
+        nav a {
             color: #fff;
-            font-size: 14px;
-            transition: transform 0.3s;
+            padding: 15px 25px;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: background 0.3s, color 0.3s;
         }
-        .news-image:hover, .project-image:hover {
-            transform: scale(1.1);
+
+        nav a:hover {
+            background: var(--button-hover-bg);
+            color: #fff;
+            border-radius: 5px;
         }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
+
+        .container {
+            flex: 1;
+            padding: 30px 20px;
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* 左侧分类栏 */
+        .sidebar {
+            width: 200px;
+            margin-right: 20px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(5px);
+            height: fit-content;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 15px;
+            color: var(--button-bg);
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: var(--button-bg);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .sidebar button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        /* 欢迎信息 */
+        .welcome {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .welcome span {
+            font-size: 1.2em;
+            color: var(--text-color);
+        }
+
+        .logout-btn {
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--button-bg);
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: background 0.3s, transform 0.3s;
+        }
+		
+		.comment button {
+		    background-color: #e74c3c;
+		    color: #fff;
+		    border: none;
+		    padding: 5px 10px;
+		    border-radius: 5px;
+		    cursor: pointer;
+		    transition: background 0.3s;
+		    font-size: 0.8em;
+		}
+		
+		.comment button:hover {
+		    background-color: #c0392b;
+		}
+		
+		/* 深色模式下的删除按钮样式 */
+		[data-theme="dark"] .comment button {
+		    background-color: #e74c3c;
+		    color: #fff;
+		}
+		
+		[data-theme="dark"] .comment button:hover {
+		    background-color: #c0392b;
+		}
+
+
+        .theme-toggle:hover {
+            background-color: var(--button-hover-bg);
+            transform: rotate(90deg);
+        }
+
+        /* 表单样式 */
+        form {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(5px);
+            max-width: 500px;
+            margin: auto;
+        }
+
+        form input, form textarea, form select, form button {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+
+        form input:focus, form textarea:focus, form select:focus {
+            border-color: #2980b9;
+            outline: none;
+        }
+
+        form button {
+            background-color: var(--button-bg);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        form button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        /* 博客列表 */
+        .posts-container {
+            flex: 1;
+        }
+
+        .post {
+            background: var(--card-bg);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+
+        .post h3 {
+            margin-bottom: 10px;
+            color: var(--button-bg);
+        }
+
+        .post p.meta {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .post p.content {
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* About 和 Contact 部分 */
+        .about, .contact {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(5px);
+            margin-bottom: 20px;
+        }
+
+        .about h2, .contact h2 {
+            margin-bottom: 15px;
+            color: var(--button-bg);
+        }
+
+        .about p, .contact p {
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* 搜索栏 */
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            width: 60%;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px 0 0 8px;
+            outline: none;
+            min-width: 200px;
+        }
+
+        .search-bar button {
+            padding: 10px 20px;
+            border: none;
+            background-color: var(--button-bg);
+            color: #fff;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .search-bar button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        /* 清除搜索按钮 */
+        .clear-search-btn {
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .clear-search-btn:hover {
+            background-color: #c0392b;
+        }
+		
+		/* 美化点赞和点踩按钮 */
+		.like-btn, .dislike-btn {
+		    background: none;
+		    border: none;
+		    font-size: 0.9em;
+		    cursor: pointer;
+		    margin-right: 10px;
+		    color: var(--text-color); /* 根据主题设置颜色 */
+		    transition: color 0.3s;
+		}
+		
+		.like-btn:hover, .dislike-btn:hover {
+		    color: var(--button-bg); /* 鼠标悬浮时改变颜色 */
+		}
+		
+		.like-btn:disabled, .dislike-btn:disabled {
+		    color: #ccc; /* 禁用状态 */
+		    cursor: not-allowed;
+		}
+		
+		/* 评论区样式 */
+		.comments-section {
+		    margin-top: 20px;
+		    background: var(--card-bg);
+		    padding: 15px;
+		    border-radius: 10px;
+		    box-shadow: var(--shadow);
+		    backdrop-filter: blur(5px);
+		    max-height: 300px;
+		    overflow-y: auto;
+		}
+		
+		.comment {
+		    padding: 10px;
+		    background: rgba(255, 255, 255, 0.9);
+		    margin-bottom: 10px;
+		    border-radius: 10px;
+		    box-shadow: var(--shadow);
+		}
+		
+		/* 评论输入区样式 */
+		.comment-input-area {
+		    display: flex;
+		    align-items: center;
+		    background: var(--card-bg);
+		    padding: 15px;
+		    border-radius: 10px;
+		    box-shadow: var(--shadow);
+		    backdrop-filter: blur(5px);
+		    margin-top: 20px;
+		}
+		
+		#comment-input {
+		    flex: 1;
+		    padding: 10px;
+		    border: none;
+		    border-radius: 10px;
+		    margin-right: 10px;
+		    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+		    outline: none;
+		    resize: none;
+		}
+		
+		#comment-submit {
+		    background-color: var(--button-bg);
+		    color: #fff;
+		    border: none;
+		    padding: 10px 20px;
+		    border-radius: 10px;
+		    cursor: pointer;
+		    transition: background 0.3s;
+		}
+		
+		#comment-submit:hover {
+		    background-color: var(--button-hover-bg);
+		}
+
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
             }
-            to {
-                opacity: 1;
+
+            .search-bar input {
+                width: 100%;
+                border-radius: 8px;
             }
+
+            .search-bar button {
+                width: 100%;
+                border-radius: 8px;
+            }
+
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .posts-container {
+                width: 100%;
+            }
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 2000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 10% auto; /* 10% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(5px);
+            position: relative;
+        }
+
+        /* 关闭按钮 */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        /* 博客详情 */
+        .blog-details img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .blog-details .content {
+            white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <button onclick="showHome()">▲ 主页</button>
-    <button onclick="showNews()">👁 新事</button>
-    <button onclick="showProjects()">📜 项目</button>
-    <button onclick="showDonations()">🔑 捐赠</button>
-    <button onclick="showHWID()">🛡️ ForceHWID</button>
-</div>
+    <header>
+        <h1>Waffle 的个人博客</h1>
+        <p>Force Devlog and other funny things</p>
+    </header>
 
-<div class="content" id="content">
-    <div class="logo">Waffle</div>
-    <div class="divider"></div>
-    <div class="header">Welcome</div>
-</div>
+    <nav>
+        <a href="#" id="nav-home">首页</a>
+        <a href="#" id="nav-about">关于我</a>
+        <a href="#" id="nav-contact">联系我</a>
+        <a href="#" id="nav-login">登录</a>
+        <a href="#" id="nav-register">注册</a>
+        <a href="#" id="nav-post" class="hidden">发布博客</a>
+    </nav>
 
-<script>
+    <div class="container">
+		<div class="sidebar" id="category-sidebar">
+		    <h3>分类</h3>
+		    <ul>
+		        <li><button data-category="全部">全部</button></li>
+		        <li><button data-category="技术">技术</button></li>
+		        <li><button data-category="生活">生活</button></li>
+		        <li><button data-category="学习">学习</button></li>
+		        <li><button data-category="其他">其他</button></li>
+		    </ul>
+		</div>
+
+        <div class="posts-container">
+
+            <!-- 欢迎信息 -->
+            <div class="welcome hidden" id="welcome-section">
+                <span id="welcome-message">欢迎, waffle_hfb!</span>
+                <button class="logout-btn" id="logout-btn">退出</button>
+            </div>
+
+			<!-- 搜索栏 -->
+			<div class="search-bar" id="search-bar">
+			    <input type="text" id="search-input" placeholder="搜索博客...">
+			    <button id="search-btn">搜索</button>
+			    <button id="clear-search-btn" class="hidden clear-search-btn">清除搜索</button>
+			</div>
+
+            <!-- 首页 - 显示博客列表 -->
+            <div id="home-section">
+                <h2>最新博客</h2>
+                <div id="posts"></div>
+            </div>
+
+            <!-- 关于我 -->
+            <div id="about-section" class="hidden about">
+                <h2>关于我</h2>
+                <p>你好，我是 Waffle，一个热爱编程和分享知识的开发者。这个博客是我记录学习与工作的地方，希望能与大家共同进步。</p>
+            </div>
+
+            <!-- 联系我 -->
+            <div id="contact-section" class="hidden contact">
+                <h2>联系我</h2>
+                <form id="contact-form">
+                    <input type="text" id="contact-name" placeholder="您的名字" required>
+                    <input type="email" id="contact-email" placeholder="您的邮箱" required>
+                    <textarea id="contact-message" rows="5" placeholder="您的留言" required></textarea>
+                    <button type="submit">发送</button>
+                </form>
+            </div>
+
+            <!-- 登录表单 -->
+            <div id="login-section" class="hidden">
+                <h2>登录</h2>
+                <form id="login-form">
+                    <input type="text" id="login-username" placeholder="用户名" required>
+                    <input type="password" id="login-password" placeholder="密码" required>
+                    <button type="submit">登录</button>
+                </form>
+            </div>
+
+            <!-- 注册表单 -->
+            <div id="register-section" class="hidden">
+                <h2>注册</h2>
+                <form id="register-form">
+                    <input type="text" id="register-username" placeholder="用户名" required>
+                    <input type="password" id="register-password" placeholder="密码" required>
+                    <button type="submit">注册</button>
+                </form>
+            </div>
+
+            <!-- 发布博客 -->
+            <div id="post-section" class="hidden">
+                <h2>发布博客</h2>
+                <form id="post-form">
+                    <input type="text" id="post-title" placeholder="博客标题" required>
+                    <textarea id="post-content" rows="5" placeholder="博客内容" required></textarea>
+                    <input type="file" id="post-image" accept="image/*">
+                    <select id="post-category" required>
+                        <option value="" disabled selected>选择分类</option>
+                        <option value="技术">技术</option>
+                        <option value="生活">生活</option>
+                        <option value="学习">学习</option>
+                        <option value="其他">其他</option>
+                    </select>
+                    <button type="submit">发布</button>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle" id="theme-toggle">🌙</button>
 	
-    // 显示主页
-    function showHome() {
-        document.getElementById('content').innerHTML = `
-            <div class="logo">Waffle</div>
-            <div class="divider"></div>
-            <div class="header">Welcome To Waffle's Blog</div>`;
-    }
-
-    // 显示新闻
-    function showNews() {
-        document.getElementById('content').innerHTML = `
-            <div class="logo">Waffle</div>
-            <div class="divider"></div>
-            <div class="header">News</div>
-            <div class="news-item">
-                <div class="news-text">
-                    <h2>The First News</h2>
-                    <p>text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text</p>
-                </div>
-                <div class="news-image">Image1</div>
+    <!-- 模态框（博客详情） -->
+    <div id="blog-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="blog-details">
+                <h2 id="modal-title"></h2>
+                <p class="meta" id="modal-meta"></p>
+                <img id="modal-image" src="" alt="博客图片" style="display: none;">
+                <p class="content" id="modal-content"></p>
             </div>
-            <div class="news-item">
-                <div class="news-text">
-                    <h2>The Second News</h2>
-                    <p>text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text</p>
-                </div>
-                <div class="news-image">Image2</div>
+    
+            <!-- 评论展示区 -->
+            <div id="comments-section" class="comments-section">
+                <h3>评论</h3>
+                <div id="comments-list"></div>  <!-- 评论列表 -->
             </div>
-            <div class="news-item">
-                <div class="news-text">
-                    <h2>The Third News</h2>
-                    <p>text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text</p>
-                </div>
-                <div class="news-image">Image3</div>
+    
+            <!-- 评论输入区 -->
+            <div class="comment-input-area">
+                <textarea id="comment-input" placeholder="添加评论..." rows="3"></textarea>
+                <button id="comment-submit">发送</button>
             </div>
-        `;
-    }
+        </div>
+    </div>
 
-    // 显示项目
-    function showProjects() {
-        document.getElementById('content').innerHTML = `
-            <div class="logo">Waffle</div>
-            <div class="divider"></div>
-            <div class="header">My Projects</div>
-            <div class="projects-item">
-                <div class="projects-text">
-                    <h2>Force Public</h2>
-                    <p>2b2t 1.20.4 Cpvp Client Public Version.</p>
-                </div>
-                <div class="news-image">Image1</div>
-                <p3>baidu.com</p3>
-            </div>`;
-    }
 
-    // 显示捐赠页
-    function showDonations() {
-        document.getElementById('content').innerHTML = `
-            <div class="logo">Waffle</div>
-            <div class="divider"></div>
-            <div class="header">捐赠支持我们</div>
-            <p>感谢您的支持！您可以通过以下比特币地址捐赠：</p>
-            <p><strong>比特币钱包地址：</strong></p>
-            <p style="background-color: #f0f0f0; padding: 10px; border-radius: 5px;">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</p>
-            <p>请确保您通过比特币钱包转账时使用此地址。</p>`;
-    }
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script>
+        (function(){
+            emailjs.init('Waffle'); // 替换为你的 EmailJS User ID
+        })();
+    </script>
 
-    // 显示 HWID 页面
-    function showHWID() {
-        document.getElementById('content').innerHTML = `
-            <div class="logo">Waffle</div>
-            <div class="divider"></div>
-            <div class="header">Force HWID Page</div>
-            <div id="passwordSection">
-                <p>Please enter your admin password to access this page：</p>
-                <input type="password" id="password" placeholder="EnterPassword">
-                <button onclick="checkPassword()">Submit</button>
-            </div>
-            <div id="hwidContent" style="display:none;">
-                <p>HWID JSON:</p>
-                <p><strong>HFB_：</strong>ABC-123-XYZ-789</p>
-            </div>`;
-    }
-async function hashPassword(password) {
-    const msgBuffer = new TextEncoder().encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return hashHex;
-}
-async function checkPassword() {
-    const inputPassword = document.getElementById('password').value;
-    const hashedInputPassword = await hashPassword(inputPassword);
-    const correctHashedPassword = 'DB8937BE109E03490FB1D889461A670F4592DAB8A648A0449446172349AF57DA';
-    if (hashedInputPassword === correctHashedPassword) {
-        document.getElementById('hwidContent').style.display = 'block';
-        document.getElementById('passwordSection').style.display = 'none';
-    } else {
-        alert('Wrong Password');
-    }
-}
-</script>
+    <script>
+        // SHA-256 哈希函数
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        // 获取元素
+        const navHome = document.getElementById('nav-home');
+        const navAbout = document.getElementById('nav-about');
+        const navContact = document.getElementById('nav-contact');
+        const navLogin = document.getElementById('nav-login');
+        const navRegister = document.getElementById('nav-register');
+        const navPost = document.getElementById('nav-post');
+
+        const homeSection = document.getElementById('home-section');
+        const aboutSection = document.getElementById('about-section');
+        const contactSection = document.getElementById('contact-section');
+        const loginSection = document.getElementById('login-section');
+        const registerSection = document.getElementById('register-section');
+        const postSection = document.getElementById('post-section');
+        const welcomeSection = document.getElementById('welcome-section');
+        const welcomeMessage = document.getElementById('welcome-message');
+
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const postForm = document.getElementById('post-form');
+        const contactForm = document.getElementById('contact-form');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const categoryButtons = document.querySelectorAll('.sidebar button');
+
+        const blogModal = document.getElementById('blog-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMeta = document.getElementById('modal-meta');
+        const modalImage = document.getElementById('modal-image');
+        const modalContent = document.getElementById('modal-content');
+        const closeModal = document.querySelector('.close');
+
+        let currentUser = localStorage.getItem('currentUser');
+        let currentCategory = '全部';
+        let currentSearch = '';
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('home');
+            loadPosts();
+            if (currentUser) {
+                showWelcome();
+            }
+            loadTheme();
+        });
+
+        // 导航栏点击事件
+        navHome.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('home');
+        });
+
+        navAbout.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('about');
+        });
+
+        navContact.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('contact');
+        });
+
+        navLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('login');
+        });
+
+        navRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('register');
+        });
+
+        navPost.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('post');
+        });
+
+        // 分类栏点击事件
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                currentCategory = button.getAttribute('data-category');
+                filterPosts();
+            });
+        });
+
+		// 显示指定的部分
+		function showSection(section) {
+		    // 隐藏所有部分
+		    homeSection.classList.add('hidden');
+		    aboutSection.classList.add('hidden');
+		    contactSection.classList.add('hidden');
+		    loginSection.classList.add('hidden');
+		    registerSection.classList.add('hidden');
+		    postSection.classList.add('hidden');
+		
+		    // 获取搜索栏和分类栏
+		    const searchBar = document.getElementById('search-bar');  // 搜索栏
+		    const categorySidebar = document.getElementById('category-sidebar');  // 分类栏
+		
+		    // 确保这两部分都存在
+		    if (searchBar) searchBar.classList.add('hidden');  // 默认隐藏搜索栏
+		    if (categorySidebar) categorySidebar.classList.add('hidden');  // 默认隐藏分类栏
+		
+		    // 根据参数显示部分
+		    if (section === 'home') {
+		        homeSection.classList.remove('hidden');
+		        if (searchBar) searchBar.classList.remove('hidden');  // 仅在首页显示搜索栏
+		        if (categorySidebar) categorySidebar.classList.remove('hidden');  // 仅在首页显示分类栏
+		    } else if (section === 'about') {
+		        aboutSection.classList.remove('hidden');
+		    } else if (section === 'contact') {
+		        contactSection.classList.remove('hidden');
+		    } else if (section === 'login') {
+		        loginSection.classList.remove('hidden');
+		    } else if (section === 'register') {
+		        registerSection.classList.remove('hidden');
+		    } else if (section === 'post') {
+		        postSection.classList.remove('hidden');
+		    }
+		}
+
+
+
+		function showWelcome() {
+		    if (!currentUser) {
+		        welcomeMessage.textContent = '请登录';  
+		        navLogin.classList.remove('hidden');
+		        navRegister.classList.remove('hidden');
+		        navPost.classList.add('hidden');  
+		        return;
+		    }
+		
+		    welcomeSection.classList.remove('hidden');
+		    welcomeMessage.textContent = `欢迎, ${currentUser}!`;
+		    navLogin.classList.add('hidden');
+		    navRegister.classList.add('hidden');
+		    navPost.classList.remove('hidden');
+		}
+
+        // 注册表单提交
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('register-username').value.trim();
+            const password = document.getElementById('register-password').value.trim();
+
+            if (username === '' || password === '') {
+                alert('请填写所有字段');
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem('users')) || {};
+
+            if (users[username]) {
+                alert('用户名已存在');
+                return;
+            }
+
+            const hashedPassword = await sha256(password);
+            users[username] = hashedPassword;
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('注册成功，请登录');
+            registerForm.reset();
+            showSection('login');
+        });
+
+        // 登录表单提交
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+
+            let users = JSON.parse(localStorage.getItem('users')) || {};
+
+            if (users[username]) {
+                const hashedPassword = await sha256(password);
+                if (users[username] === hashedPassword) {
+                    localStorage.setItem('currentUser', username);
+                    currentUser = username;
+                    showWelcome();
+                    showSection('home');
+                    return;
+                }
+            }
+            alert('用户名或密码错误');
+        });
+
+        // 发布博客表单提交
+        postForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = sanitizeHTML(document.getElementById('post-title').value.trim());
+            const content = sanitizeHTML(document.getElementById('post-content').value.trim());
+            const category = document.getElementById('post-category').value;
+            const imageInput = document.getElementById('post-image');
+
+            if (title === '' || content === '' || !category) {
+                alert('请填写所有字段');
+                return;
+            }
+
+            // 处理图片
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageData = event.target.result;
+                    savePost(title, content, category, imageData);
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                savePost(title, content, category, null);
+            }
+        });
+
+        function savePost(title, content, category, imageData) {
+            let posts = JSON.parse(localStorage.getItem('posts')) || [];
+            const newPost = {
+                id: Date.now(), // 唯一ID
+                author: currentUser,
+                title: title,
+                content: content,
+                category: category,
+                date: new Date().toLocaleString(),
+                image: imageData,
+				likes: 0,  // 初始化点赞
+				dislikes: 0,  // 初始化点踩
+				comments: []  // 初始化评论为空数组
+            };
+
+            posts.unshift(newPost); // 最新的帖子在最前面
+            localStorage.setItem('posts', JSON.stringify(posts));
+            alert('博客发布成功');
+            postForm.reset();
+            loadPosts();
+            showSection('home');
+        }
+
+
+        // 联系表单提交
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = sanitizeHTML(document.getElementById('contact-name').value.trim());
+            const email = sanitizeHTML(document.getElementById('contact-email').value.trim());
+            const message = sanitizeHTML(document.getElementById('contact-message').value.trim());
+
+            if (name === '' || email === '' || message === '') {
+                alert('请填写所有字段');
+                return;
+            }
+
+            // 使用 EmailJS 发送邮件
+            const serviceID = 'service_03xd39m'; // 替换为你的 EmailJS 服务 ID
+            const templateID = 'template_iuerxyz'; // 替换为你的 EmailJS 模板 ID
+
+            const templateParams = {
+                from_name: name,
+                from_email: email,
+                message: message
+            };
+
+            emailjs.send(serviceID, templateID, templateParams)
+                .then(() => {
+                    alert(`感谢您的联系，${name}！我们会尽快回复您。`);
+                    contactForm.reset();
+                    showSection('home');
+                }, (error) => {
+                    console.error('发送失败。错误信息:', error);
+                    alert('发送失败，请稍后再试。或者发送至 huafubing0306@gmail.com 邮箱');
+                });
+        });
+
+        // 加载并显示博客
+        function loadPosts(filteredPosts = null) {
+            const postsDiv = document.getElementById('posts');
+            postsDiv.innerHTML = '';
+
+            let posts = JSON.parse(localStorage.getItem('posts')) || [];
+
+            if (filteredPosts) {
+                posts = filteredPosts;
+            }
+
+            if (posts.length === 0) {
+                postsDiv.innerHTML = '<p>暂无博客。</p>';
+                return;
+            }
+
+            posts.forEach(post => {
+                const postDiv = document.createElement('div');
+                postDiv.classList.add('post');
+                postDiv.setAttribute('data-id', post.id);
+
+                const postTitle = document.createElement('h3');
+                postTitle.textContent = post.title;
+
+                const postMeta = document.createElement('p');
+                postMeta.classList.add('meta');
+                postMeta.innerHTML = `<strong>作者:</strong> ${post.author} &nbsp; | &nbsp; <strong>分类:</strong> ${post.category} &nbsp; | &nbsp; <strong>时间:</strong> ${post.date}`;
+
+                const postContent = document.createElement('p');
+                postContent.classList.add('content');
+                postContent.textContent = post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content;
+
+                postDiv.appendChild(postTitle);
+                postDiv.appendChild(postMeta);
+                postDiv.appendChild(postContent);
+				const likeBtn = document.createElement('span');
+				likeBtn.innerHTML = `👍 ${post.likes || 0}`;
+				likeBtn.classList.add('like-btn');
+				likeBtn.addEventListener('click', () => {
+					event.stopPropagation();  
+				    if (!currentUser) {
+				        alert('请先登录！');
+				        showSection('login');
+				        return;
+				    }
+				    
+				    // 防止重复点赞
+				    let likedPosts = JSON.parse(localStorage.getItem(currentUser + '_likedPosts')) || [];
+				    if (likedPosts.includes(post.id)) {
+				        alert('您已经点赞过这篇文章');
+				        return;
+				    }
+				
+				    post.likes = (post.likes || 0) + 1;
+				    likedPosts.push(post.id);
+				    localStorage.setItem(currentUser + '_likedPosts', JSON.stringify(likedPosts));
+				    localStorage.setItem('posts', JSON.stringify(posts));
+				    loadPosts(); // 刷新博客列表，更新点赞数
+				});
+				
+				const dislikeBtn = document.createElement('span');
+				dislikeBtn.innerHTML = `👎 ${post.dislikes || 0}`;
+				dislikeBtn.classList.add('dislike-btn');
+				dislikeBtn.addEventListener('click', () => {
+					event.stopPropagation();
+				    if (!currentUser) {
+				        alert('请先登录！');
+				        showSection('login');
+				        return;
+				    }
+				    
+				    // 防止重复点踩
+				    let dislikedPosts = JSON.parse(localStorage.getItem(currentUser + '_dislikedPosts')) || [];
+				    if (dislikedPosts.includes(post.id)) {
+				        alert('您已经点踩过这篇文章');
+				        return;
+				    }
+				
+				    post.dislikes = (post.dislikes || 0) + 1;
+				    dislikedPosts.push(post.id);
+				    localStorage.setItem(currentUser + '_dislikedPosts', JSON.stringify(dislikedPosts));
+				    localStorage.setItem('posts', JSON.stringify(posts));
+				    loadPosts(); // 刷新博客列表，更新点踩数
+				});
+				
+				postDiv.appendChild(likeBtn);
+				postDiv.appendChild(dislikeBtn);
+
+                // 添加点击事件打开模态框
+                postDiv.addEventListener('click', () => {
+                    openModal(post.id);
+                });
+
+                postsDiv.appendChild(postDiv);
+            });
+        }
+
+        // 打开模态框显示博客详情
+		function openModal(postId) {
+			    const posts = JSON.parse(localStorage.getItem('posts')) || [];
+			    const post = posts.find(p => p.id === postId);
+			    if (!post) return;
+			
+			    modalTitle.textContent = post.title;
+			    modalMeta.innerHTML = `<strong>作者:</strong> ${post.author} &nbsp; | &nbsp; <strong>分类:</strong> ${post.category} &nbsp; | &nbsp; <strong>时间:</strong> ${post.date}`;
+			    modalContent.textContent = post.content;
+			
+			    if (post.image) {
+			        modalImage.src = post.image;
+			        modalImage.style.display = 'block';
+			    } else {
+			        modalImage.style.display = 'none';
+			    }
+			
+			    const commentsList = document.getElementById('comments-list');
+			    commentsList.innerHTML = '';
+			
+			    if (post.comments && post.comments.length > 0) {
+			        post.comments.forEach((comment, index) => {
+			            const commentDiv = document.createElement('div');
+			            commentDiv.classList.add('comment');
+			            commentDiv.innerHTML = `<strong>${comment.user}:</strong> ${comment.text}`;
+			
+			            // 如果当前用户是评论的作者，显示删除按钮
+			            if (comment.user === currentUser) {
+			                const deleteBtn = document.createElement('button');
+			                deleteBtn.textContent = '删除';
+			                deleteBtn.style.marginLeft = '10px';
+			
+			                // 点击按钮后删除该评论的 HTML 元素
+			                deleteBtn.addEventListener('click', () => {
+			                    deleteComment(postId, index, commentDiv);
+			                });
+			
+			                commentDiv.appendChild(deleteBtn);
+			            }
+			
+			            commentsList.appendChild(commentDiv);
+			        });
+			    } else {
+			        commentsList.innerHTML = '<p>暂无评论</p>';
+			    }
+			
+			    blogModal.style.display = 'block';
+				
+		    // 解绑之前的点击事件，防止重复绑定
+		    const commentSubmit = document.getElementById('comment-submit');
+		    commentSubmit.replaceWith(commentSubmit.cloneNode(true)); // 解除事件绑定，避免重复
+		    const newCommentSubmit = document.getElementById('comment-submit');
+		
+		    // 绑定新的提交评论事件
+		    newCommentSubmit.addEventListener('click', () => {
+		        const commentInput = document.getElementById('comment-input');
+		        const comment = commentInput.value.trim();
+		        
+		        if (comment === '') {
+		            alert('评论不能为空');
+		            return;
+		        }
+		
+		        // 添加评论到当前博客
+		        const posts = JSON.parse(localStorage.getItem('posts')) || [];
+		        const post = posts.find(p => p.id === postId);
+		
+		        if (!post.comments) {
+		            post.comments = [];
+		        }
+		
+		        post.comments.push({ user: currentUser, text: comment });
+		        localStorage.setItem('posts', JSON.stringify(posts));
+		
+		        // 清空输入框并刷新评论
+		        commentInput.value = '';
+		        openModal(postId); // 重新加载评论列表
+		    });
+		}
+
+		function deleteComment(postId, commentIndex, commentDiv) {
+		    const posts = JSON.parse(localStorage.getItem('posts')) || [];
+		    const post = posts.find(p => p.id === postId);
+		
+		    if (post && post.comments) {
+		        post.comments.splice(commentIndex, 1);  // 删除评论数据
+		        localStorage.setItem('posts', JSON.stringify(posts));  // 更新 localStorage
+		
+		        // 从 DOM 中删除该评论元素
+		        commentDiv.remove();
+		    }
+		}
+
+
+
+
+        // 关闭模态框
+        closeModal.addEventListener('click', () => {
+            blogModal.style.display = 'none';
+        });
+
+        // 点击模态框外部关闭
+        window.addEventListener('click', (e) => {
+            if (e.target == blogModal) {
+                blogModal.style.display = 'none';
+            }
+        });
+
+        // 搜索功能
+        searchBtn.addEventListener('click', () => {
+            const query = searchInput.value.trim().toLowerCase();
+            if (query === '') {
+                alert('请输入搜索内容');
+                return;
+            }
+
+            let posts = JSON.parse(localStorage.getItem('posts')) || [];
+            const filteredPosts = posts.filter(post => 
+                post.title.toLowerCase().includes(query) || 
+                post.content.toLowerCase().includes(query) ||
+                post.category.toLowerCase().includes(query)
+            );
+
+            if (filteredPosts.length === 0) {
+                alert('未找到匹配的博客');
+                return;
+            }
+
+            currentSearch = query;
+            loadPosts(filteredPosts);
+            clearSearchBtn.classList.remove('hidden');
+        });
+		
+        // 清除搜索
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            loadPosts();
+            clearSearchBtn.classList.add('hidden');
+        });
+
+        // 输入框回车搜索
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchBtn.click();
+            }
+        });
+
+        // 分类过滤
+        function filterPosts() {
+            let posts = JSON.parse(localStorage.getItem('posts')) || [];
+            if (currentCategory !== '全部') {
+                posts = posts.filter(post => post.category === currentCategory);
+            }
+            if (currentSearch !== '') {
+                posts = posts.filter(post => 
+                    post.title.toLowerCase().includes(currentSearch) || 
+                    post.content.toLowerCase().includes(currentSearch) ||
+                    post.category.toLowerCase().includes(currentSearch)
+                );
+            }
+            loadPosts(posts);
+        }
+
+        // 监听搜索输入变化以更新当前搜索
+        searchInput.addEventListener('input', () => {
+            currentSearch = searchInput.value.trim().toLowerCase();
+            filterPosts();
+        });
+
+        // 退出登录
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            welcomeSection.classList.add('hidden');
+            navLogin.classList.remove('hidden');
+            navRegister.classList.remove('hidden');
+            navPost.classList.add('hidden');
+            showSection('home');
+        });
+
+        // 输入消毒函数，防止XSS
+        function sanitizeHTML(str) {
+            var temp = document.createElement('div');
+            temp.textContent = str;
+            return temp.innerHTML;
+        }
+
+        // 主题切换功能
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', targetTheme);
+            localStorage.setItem('theme', targetTheme);
+            updateThemeToggleIcon(targetTheme);
+        });
+		
+
+        // 加载主题
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeToggleIcon(savedTheme);
+        }
+
+        // 更新主题切换按钮图标
+        function updateThemeToggleIcon(theme) {
+            if (theme === 'dark') {
+                themeToggle.textContent = '☀️';
+            } else {
+                themeToggle.textContent = '🌙';
+            }
+        }
+    </script>
 
 </body>
 </html>
