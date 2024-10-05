@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force Client - Payment</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #1a1a1a;
+            --text-color: #e0e0e0;
+            --accent-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --error-color: #ff6b6b;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background-color: var(--card-bg);
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .logo:hover {
+            color: var(--secondary-color);
+        }
+        .container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        .payment-container {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+        .payment-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(76, 175, 80, 0.1) 0%, rgba(33, 150, 243, 0.1) 50%, rgba(0, 0, 0, 0) 70%);
+            animation: rotate 20s linear infinite;
+            z-index: 0;
+        }
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h1, h2 {
+            text-align: center;
+            color: var(--accent-color);
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--secondary-color);
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #222;
+            color: var(--text-color);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        .btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        @keyframes ripple {
+            0% { transform: scale(0, 0); opacity: 1; }
+            20% { transform: scale(25, 25); opacity: 1; }
+            100% { opacity: 0; transform: scale(40, 40); }
+        }
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .payment-method {
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .payment-method:hover, .payment-method.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .payment-method::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: all 0.5s;
+        }
+        .payment-method:hover::before {
+            left: 100%;
+        }
+        #paymentDetails {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        #paymentDetails.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 5px;
+            background-color: #333;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress {
+            width: 0;
+            height: 100%;
+            background-color: var(--accent-color);
+            transition: width 0.5s ease;
+        }
+        .back-button {
+            background: none;
+            border: none;
+            color: var(--secondary-color);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px 10px;
+            transition: color 0.3s ease;
+        }
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--accent-color);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">Force Client</a>
+            <button class="back-button" onclick="goBack()" style="display: none;">← Back</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="payment-container">
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <div id="paymentMethodSelection">
+                <h1>Select Payment Method</h1>
+                <div class="payment-methods">
+                    <div class="payment-method" data-method="credit-card">Credit Card</div>
+                    <div class="payment-method" data-method="paypal">PayPal</div>
+                    <div class="payment-method" data-method="bitcoin">Bitcoin</div>
+                    <div class="payment-method" data-method="alipay">Alipay (国内代购)</div>
+                </div>
+            </div>
+            <div id="paymentDetails" style="display: none;">
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label for="plan">Select Plan</label>
+                        <select id="plan" name="plan" required>
+                            <option value="basic">Basic - $19.99</option>
+                            <option value="pro">Pro - $39.99</option>
+                            <option value="ultimate">Ultimate - $69.99</option>
+                        </select>
+                    </div>
+                    <div id="creditCardFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="card">Card Number</label>
+                            <input type="text" id="card" name="card" placeholder="1234 5678 9012 3456" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="expiry">Expiry Date</label>
+                            <input type="text" id="expiry" name="expiry" placeholder="MM/YY" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" name="cvv" placeholder="123" required>
+                        </div>
+                    </div>
+                    <div id="paypalFields" style="display: none;">
+                        <p>You will be redirected to PayPal to complete your purchase.</p>
+                    </div>
+                    <div id="bitcoinFields" style="display: none;">
+                        <p>Bitcoin payment address: 1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2</p>
+                        <p>Please send the exact amount for your selected plan to this address.</p>
+                    </div>
+                    <div id="alipayFields" style="display: none;">
+                        <p>支付宝账号: example@alipay.com</p>
+                        <p>请联系我们的客服获取具体付款信息和汇率。</p>
+                    </div>
+                    <button type="submit" class="btn">Complete Payment</button>
+                </form>
+            </div>
+            <div class="loading"></div>
+        </div>
+    </div>
+
+    <script>
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        const paymentMethodSelection = document.getElementById('paymentMethodSelection');
+        const paymentDetails = document.getElementById('paymentDetails');
+        const creditCardFields = document.getElementById('creditCardFields');
+        const paypalFields = document.getElementById('paypalFields');
+        const bitcoinFields = document.getElementById('bitcoinFields');
+        const alipayFields = document.getElementById('alipayFields');
+        const progressBar = document.querySelector('.progress');
+        const backButton = document.querySelector('.back-button');
+        const loadingIndicator = document.querySelector('.loading');
+
+        function updateProgress(step) {
+            const progress = step * 50;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function showLoading() {
+            loadingIndicator.style.display = 'block';
+            setTimeout(() => {
+                loadingIndicator.style.display = 'none';
+            }, 1500);
+        }
+
+        paymentMethods.forEach(method => {
+            method.addEventListener('click', function() {
+                paymentMethods.forEach(m => m.classList.remove('active'));
+                this.classList.add('active');
+                
+                showLoading();
+
+                setTimeout(() => {
+                    paymentMethodSelection.style.display = 'none';
+                    paymentDetails.style.display = 'block';
+                    paymentDetails.classList.add('visible');
+                    backButton.style.display = 'block';
+
+                    // Hide all payment-specific fields
+                    creditCardFields.style.display = 'none';
+                    paypalFields.style.display = 'none';
+                    bitcoinFields.style.display = 'none';
+                    alipayFields.style.display = 'none';
+
+                    // Show fields for the selected payment method
+                    switch(this.dataset.method) {
+                        case 'credit-card':
+                            creditCardFields.style.display = 'block';
+                            break;
+                        case 'paypal':
+                            paypalFields.style.display = 'block';
+                            break;
+                        case 'bitcoin':
+                            bitcoinFields.style.display = 'block';
+                            break;
+                        case 'alipay':
+                            alipayFields.style.display = 'block';
+                            break;
+                    }
+
+                    updateProgress(1);
+                }, 1500);
+            });
+        });
+
+        function goBack() {
+            paymentDetails.classList.remove('visible');
+            setTimeout(() => {
+                paymentMethodSelection.style.display = 'block';
+                paymentDetails.style.display = 'none';
+                backButton.style.display = 'none';
+                updateProgress(0);
+            }, 300);
+        }
+
+		document.getElementById('paymentForm').addEventListener('submit', function(e) {
+		    e.preventDefault();
+		    showLoading();
+		    setTimeout(() => {
+		        alert('Payment processed successfully! Redirecting to dashboard...');
+		        updateProgress(2);
+		        window.location.href = 'dashboard.html'; // Redirect to dashboard
+		    }, 1500);
+		});
+    </script>
+</body>
+</html>

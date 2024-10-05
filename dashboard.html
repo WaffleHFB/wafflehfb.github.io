@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force Client - Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #1a1a1a;
+            --text-color: #e0e0e0;
+            --accent-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --error-color: #ff6b6b;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--card-bg);
+            padding: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .logo:hover {
+            color: var(--secondary-color);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .dashboard-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        h1, h2 {
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #222;
+            color: var(--text-color);
+        }
+        .status {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .status.active {
+            color: var(--accent-color);
+        }
+        .status.inactive {
+            color: var(--error-color);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">Force Client</a>
+            <nav>
+                <a href="index.html" class="btn">Back to Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Welcome to Your Dashboard</h1>
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <h2>Download Force Client</h2>
+                <p>Download the latest version of Force Client for your system.</p>
+                <a href="#" class="btn" onclick="alert('Download started!')">Download Now</a>
+            </div>
+            <div class="dashboard-card">
+                <h2>HWID Binding</h2>
+                <p>Bind your hardware ID to your account for secure access.</p>
+                <input type="text" id="hwid" placeholder="Enter your HWID">
+                <button class="btn" onclick="bindHWID()">Bind HWID</button>
+                <p class="status" id="bindStatus"></p>
+            </div>
+            <div class="dashboard-card">
+                <h2>Account Status</h2>
+                <p>Current Plan: <span id="currentPlan">Pro</span></p>
+                <p>Expiration Date: <span id="expirationDate">2024-12-31</span></p>
+                <p class="status active">Active</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function bindHWID() {
+            const hwid = document.getElementById('hwid').value;
+            if (hwid) {
+                // Here you would typically send this HWID to your server
+                // For this example, we'll just simulate a successful binding
+                document.getElementById('bindStatus').textContent = 'HWID bound successfully!';
+                document.getElementById('bindStatus').className = 'status active';
+            } else {
+                document.getElementById('bindStatus').textContent = 'Please enter a valid HWID.';
+                document.getElementById('bindStatus').className = 'status inactive';
+            }
+        }
+    </script>
+</body>
+</html>
