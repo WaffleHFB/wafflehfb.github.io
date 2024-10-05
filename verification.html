@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force Client - Dashboard Access</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="encrypted-codes.js"></script>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #1a1a1a;
+            --text-color: #e0e0e0;
+            --accent-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --error-color: #ff6b6b;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 1rem;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #222;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #accessButton {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        #accessButton:hover {
+            background-color: #45a049;
+        }
+        #homeButton {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        #homeButton:hover {
+            background-color: #1976D2;
+        }
+        #message {
+            margin-top: 1rem;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Enter Dashboard</h1>
+        <input type="text" id="activationCode" placeholder="Enter your activation code">
+        <div class="button-container">
+            <button id="accessButton">Access Dashboard</button>
+            <button id="homeButton">Return to Home</button>
+        </div>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const accessButton = document.getElementById('accessButton');
+            const homeButton = document.getElementById('homeButton');
+            const activationCodeInput = document.getElementById('activationCode');
+            const message = document.getElementById('message');
+
+            accessButton.addEventListener('click', verifyCode);
+            homeButton.addEventListener('click', returnToHome);
+
+            function verifyCode() {
+                console.log('Verify code function called');
+                const enteredCode = activationCodeInput.value.trim();
+
+                if (!enteredCode) {
+                    message.textContent = "Please enter an activation code.";
+                    message.style.color = "var(--error-color)";
+                    return;
+                }
+
+                try {
+                    if (validateActivationCode(enteredCode)) {
+                        message.textContent = "Activation successful! Redirecting to dashboard...";
+                        message.style.color = "var(--accent-color)";
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 1500);
+                    } else {
+                        message.textContent = "Invalid activation code. Please try again.";
+                        message.style.color = "var(--error-color)";
+                    }
+                } catch (error) {
+                    console.error('Error during code verification:', error);
+                    message.textContent = "An error occurred. Please try again.";
+                    message.style.color = "var(--error-color)";
+                }
+            }
+
+            function returnToHome() {
+                window.location.href = 'index.html';
+            }
+
+            console.log('Encrypted codes loaded:', encryptedCodes ? 'Yes' : 'No');
+            console.log('Validate function available:', typeof validateActivationCode === 'function' ? 'Yes' : 'No');
+        });
+    </script>
+</body>
+</html>
