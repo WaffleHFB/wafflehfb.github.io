@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章列表 - Waffle's Blog</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <a href="index.html"><code>Waffle</code></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="posts.html" class="active">文章</a></li>
+                <li><a href="projects.html">项目</a></li>
+                <li><a href="changelog.html">更新日志</a></li>
+                <li><a href="about.html">关于</a></li>
+                <li><a href="https://github.com/WaffleHFB" target="_blank" class="github-link">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container posts-page">
+        <h1>技术文章</h1>
+        <div class="posts-grid">
+            <article class="post-card">
+                <div class="post-meta">
+                    <time>2024-03-20</time>
+                    <span class="tag">Minecraft</span>
+                </div>
+                <h3><a href="posts/minecraft-client-dev.html">Minecraft 客户端开发入门指南</a></h3>
+                <p>从零开始学习 Minecraft 客户端开发，包括环境搭建、基础概念和实战案例...</p>
+                <div class="post-preview">
+                    <p>核心内容：</p>
+                    <ul>
+                        <li>开发环境配置</li>
+                        <li>事件系统实现</li>
+                        <li>渲染系统开发</li>
+                        <li>模块系统设计</li>
+                        <li>性能优化技巧</li>
+                    </ul>
+                    <div class="preview-code">
+                        <pre><code>@EventHandler
+public void onUpdate(UpdateEvent event) {
+    // 事件处理示例
+}</code></pre>
+                    </div>
+                </div>
+                <a href="posts/minecraft-client-dev.html" class="read-more">
+                    阅读全文
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6l6 6-6 6"/>
+                    </svg>
+                </a>
+            </article>
+
+            <article class="post-card">
+                <div class="post-meta">
+                    <time>2024-03-18</time>
+                    <span class="tag">Java</span>
+                </div>
+                <h3><a href="posts/java-optimization.html">Java 性能优化实践</a></h3>
+                <p>深入探讨 Java 应用性能优化技巧，从 JVM 调优到代码层面的最佳实践...</p>
+                <div class="post-preview">
+                    <p>优化要点：</p>
+                    <ul>
+                        <li>JVM 参数调优</li>
+                        <li>GC 优化策略</li>
+                        <li>内存管理优化</li>
+                        <li>多线程性能</li>
+                        <li>代码层面优化</li>
+                    </ul>
+                    <div class="preview-code">
+                        <pre><code>// JVM 优化示例
+-XX:+UseG1GC
+-XX:MaxGCPauseMillis=200
+-XX:ParallelGCThreads=8</code></pre>
+                    </div>
+                </div>
+                <a href="posts/java-optimization.html" class="read-more">
+                    阅读全文
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6l6 6-6 6"/>
+                    </svg>
+                </a>
+            </article>
+
+            <article class="post-card">
+                <div class="post-meta">
+                    <time>2024-03-15</time>
+                    <span class="tag">2b2t</span>
+                </div>
+                <h3><a href="posts/2b2t-crystalpvp.html">2b2t 水晶 PvP 技巧详解</a></h3>
+                <p>详细介绍 2b2t 服务器中水晶 PvP 的各种技巧和策略...</p>
+                <div class="post-preview">
+                    <p>核心内容：</p>
+                    <ul>
+                        <li>伤害计算公式</li>
+                        <li>自动机制原理</li>
+                        <li>防御策略分析</li>
+                        <li>连招技巧详解</li>
+                    </ul>
+                    <div class="preview-code">
+                        <pre><code>// 水晶伤害计算
+damage = base * (1 - min(20, resistance * 5) / 25)
+        * (1 - min(20, protection) / 25)</code></pre>
+                    </div>
+                </div>
+                <a href="posts/2b2t-crystalpvp.html" class="read-more">
+                    阅读全文
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6l6 6-6 6"/>
+                    </svg>
+                </a>
+            </article>
+
+            <article class="post-card">
+                <div class="post-meta">
+                    <time>2024-03-10</time>
+                    <span class="tag">开发</span>
+                </div>
+                <h3><a href="posts/client-architecture.html">现代客户端架构设计</a></h3>
+                <p>探讨游戏客户端的架构设计原则，从模块化到性能优化的全面解析...</p>
+                <div class="post-preview">
+                    <p>主要内容：</p>
+                    <ul>
+                        <li>模块化设计</li>
+                        <li>事件系统实现</li>
+                        <li>配置管理</li>
+                        <li>性能优化</li>
+                    </ul>
+                    <div class="preview-code">
+                        <pre><code>public class Module {
+    private final String name;
+    private final Category category;
+    private boolean enabled;
+    
+    // 模块基础结构
+}</code></pre>
+                    </div>
+                </div>
+                <a href="posts/client-architecture.html" class="read-more">
+                    阅读全文
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6l6 6-6 6"/>
+                    </svg>
+                </a>
+            </article>
+
+            <article class="post-card">
+                <div class="post-meta">
+                    <time>2024-03-05</time>
+                    <span class="tag">安全</span>
+                </div>
+                <h3><a href="posts/client-security.html">客户端安全性设计</a></h3>
+                <p>如何设计安全的客户端程序，防止反编译和作弊检测的绕过...</p>
+                <div class="post-preview">
+                    <p>核心内容：</p>
+                    <ul>
+                        <li>代码混淆技术</li>
+                        <li>反调试机制</li>
+                        <li>数据加密方案</li>
+                        <li>完整性校验</li>
+                    </ul>
+                    <div class="preview-code">
+                        <pre><code>// ProGuard 配置示例
+-keep class com.example.api.* { *; }
+-keepclassmembers class * {
+    @Annotation *;
+}</code></pre>
+                    </div>
+                </div>
+                <a href="posts/client-security.html" class="read-more">
+                    阅读全文
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6l6 6-6 6"/>
+                    </svg>
+                </a>
+            </article>
+
+            <article class="post-card">
+                <div class="post-meta">
+                    <time>2024-03-25</time>
+                    <span class="tag">PvP</span>
+                </div>
+                <h3><a href="posts/hypixel-sweat.html">Hypixel 出汗怪速通指南</a></h3>
+                <p>从0到Sweat，教你如何成为让所有人都讨厌的那个人 (笑)...</p>
+                <div class="post-preview">
+                    <p>速通要点：</p>
+                    <ul>
+                        <li>基础配置指南</li>
+                        <li>进阶技巧详解</li>
+                        <li>心理战术分析</li>
+                        <li>实战案例分享</li>
+                    </ul>
+                    <div class="preview-code">
+                        <pre><code>// 标配设置
+Mouse: Bloody A70
+CPS: Yes
+Sensitivity: ∞
+W_key: Stuck</code></pre>
+                    </div>
+                </div>
+                <a href="posts/hypixel-sweat.html" class="read-more">
+                    阅读全文
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6l6 6-6 6"/>
+                    </svg>
+                </a>
+            </article>
+
+            <article class="post-card">
+                <div class="post-meta">
+                    <time>2024-03-22</time>
+                    <span class="tag">PvP</span>
+                </div>
+                <h3><a href="posts/1-8-pvp-mindset.html">1.8 PvP 心态养成指南</a></h3>
+                <p>W键卡住，CPS拉满，但最重要的是让对手破防（不是</p>
+                <div class="post-preview">
+                    <p>核心内容：</p>
+                    <ul>
+                        <li>基础心态培养</li>
+                        <li>进阶技巧解析</li>
+                        <li>实战心理建设</li>
+                        <li>破防艺术精讲</li>
+                    </ul>
+                    <div class="preview-code">
+                        <pre><code>// 标准配置
+自信 = 200%
+嘴臭指数 = MAX
+键盘 = 已磨损
+鼠标 = 已调教</code></pre>
+                    </div>
+                </div>
+                <a href="posts/1-8-pvp-mindset.html" class="read-more">
+                    阅读全文
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6l6 6-6 6"/>
+                    </svg>
+                </a>
+            </article>
+
+            <article class="post-card">
+                <div class="post-meta">
+                    <time>2024-03-17</time>
+                    <span class="tag">Hack</span>
+                </div>
+                <h3><a href="posts/hack-pvp-analysis.html">从技术角度分析 Hack PvP</a></h3>
+                <p>当你在和一个Hacker战斗时，你在和什么在战斗？一段有趣的代码分析...</p>
+                <div class="post-preview">
+                    <p>主要内容：</p>
+                    <ul>
+                        <li>目标选择算法</li>
+                        <li>预判系统实现</li>
+                        <li>自动格挡机制</li>
+                        <li>反作弊对抗</li>
+                    </ul>
+                    <div class="preview-code">
+                        <pre><code>private Entity getBestTarget() {
+    return entities.stream()
+        .filter(this::isValid)
+        .min(this::calculateThreat)
+        .orElse(null);
+}</code></pre>
+                    </div>
+                </div>
+                <a href="posts/hack-pvp-analysis.html" class="read-more">
+                    阅读全文
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6l6 6-6 6"/>
+                    </svg>
+                </a>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 Waffle's Blog. Built with 💻 and 🎮</p>
+        </div>
+    </footer>
+    <script src="particles.js"></script>
+    <script src="matrix-rain.js"></script>
+</body>
+</html> 
