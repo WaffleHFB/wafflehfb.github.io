@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2b2t 水晶 PvP 技巧详解 - Waffle's Blog</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <a href="../index.html"><code>Waffle</code></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../posts.html" class="active">文章</a></li>
+                <li><a href="../projects.html">项目</a></li>
+                <li><a href="../changelog.html">更新日志</a></li>
+                <li><a href="../about.html">关于</a></li>
+                <li><a href="https://github.com/WaffleHFB" target="_blank" class="github-link">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container post-detail">
+        <article>
+            <header class="post-header">
+                <div class="post-meta">
+                    <time>2024-03-15</time>
+                    <span class="tag">2b2t</span>
+                    <span class="tag">PvP</span>
+                </div>
+                <h1>2b2t 水晶 PvP 技巧详解</h1>
+                <div class="post-info">
+                    <span>阅读时间：30分钟</span>
+                    <span>作者：Waffle</span>
+                </div>
+            </header>
+
+            <div class="post-content">
+                <h2>前言</h2>
+                <p>在2b2t这个"无政府主义"服务器中,水晶PvP已经发展成了一门艺术。本文将从技术和心理两个层面深入分析水晶PvP的本质。</p>
+
+                <h2>基础理论</h2>
+                <h3>伤害计算</h3>
+                <div class="code-block">
+                    <pre><code>
+// 水晶爆炸伤害计算
+damage = (base_damage * (1 - min(20, max(0, resistance * 5)) / 25)
+         * (1 - min(20, protection) / 25))
+         * (1 - min(1, blast_protection * 0.04))
+
+// 距离衰减
+damage = damage * (1 - distance / max_distance)
+                    </code></pre>
+                </div>
+
+                <h3>时序分析</h3>
+                <p>一个完整的水晶攻击周期包含：</p>
+                <ul>
+                    <li>黑曜石放置: ~100ms</li>
+                    <li>水晶放置: ~50ms</li>
+                    <li>服务器响应: ~30-100ms</li>
+                    <li>水晶爆炸: 即时</li>
+                    <li>总周期: ~200-300ms</li>
+                </ul>
+
+                <h2>自动机制</h2>
+                <h3>放置逻辑</h3>
+                <div class="code-block">
+                    <pre><code>
+public class CrystalLogic {
+    // 最佳放置点计算
+    private Vec3d getBestPosition() {
+        return surroundingBlocks.stream()
+            .filter(this::canPlaceCrystal)
+            .max(Comparator.comparingDouble(this::calculateDamage))
+            .orElse(null);
+    }
+    
+    // 伤害预测
+    private double calculateDamage(Vec3d pos) {
+        double damage = getExplosionDamage(pos);
+        // 考虑目标装备
+        damage *= getArmorMultiplier(target);
+        // 考虑抗性效果
+        damage *= getResistanceMultiplier(target);
+        return damage;
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h3>防御策略</h3>
+                <p>自动防御系统需要考虑：</p>
+                <ul>
+                    <li>图腾检测与切换</li>
+                    <li>水晶预判与破坏</li>
+                    <li>装备耐久监控</li>
+                    <li>地形利用策略</li>
+                </ul>
+
+                <div class="code-block">
+                    <pre><code>
+// 防御系统核心逻辑
+public class DefenseSystem {
+    @EventHandler
+    public void onCrystalSpawn(CrystalSpawnEvent event) {
+        // 计算威胁等级
+        double threat = calculateThreat(event.getPos());
+        
+        if (threat > THREAT_THRESHOLD) {
+            // 紧急防御措施
+            activateDefense();
+        }
+    }
+    
+    private void activateDefense() {
+        // 切换图腾
+        switchTotem();
+        // 寻找掩体
+        findCover();
+        // 准备反击
+        prepareCounter();
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>心理战术</h2>
+                <h3>压制策略</h3>
+                <p>高水平的水晶PvP不仅是技术的较量，更是心理的博弈：</p>
+                <ul>
+                    <li>节奏控制（让对手无法预测你的攻击模式）</li>
+                    <li>资源消耗（逼迫对手浪费图腾）</li>
+                    <li>视觉干扰（利用粒子效果和爆炸）</li>
+                    <li>心理暗示（制造压迫感）</li>
+                </ul>
+
+                <h3>反制技巧</h3>
+                <div class="code-block">
+                    <pre><code>
+// 攻击模式随机化
+private void randomizePattern() {
+    switch (Random.nextInt(3)) {
+        case 0: singleBurst();    // 单点爆发
+        case 1: multiSpread();    // 多点扩散
+        case 2: fakeAndStrike();  // 虚实结合
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>进阶战术</h2>
+                <h3>连锁技巧</h3>
+                <p>高级连招示例：</p>
+                <div class="code-block">
+                    <pre><code>
+// 进阶连招系统
+class ComboSystem {
+    // 女巫跳水晶
+    void witchCrystal() {
+        placeObsidian(UP);
+        placeCrystal();
+        jumpAndBreak();
+    }
+    
+    // 闪电五连鞭
+    void lightningCombo() {
+        for (int i = 0; i < 5; i++) {
+            quickPlace();
+            instantBreak();
+            repositionNext();
+        }
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>装备配置</h2>
+                <h3>最佳实践</h3>
+                <ul>
+                    <li>主手: 钻石剑（锋利V，耐久III）</li>
+                    <li>副手: 图腾（至少64个）</li>
+                    <li>装备: 全套下界合金（保护IV）</li>
+                    <li>背包: 黑曜石x2组，水晶x4组</li>
+                </ul>
+
+                <h2>常见错误</h2>
+                <ul>
+                    <li>过度追求伤害而忽视防御</li>
+                    <li>预判不足导致连招断链</li>
+                    <li>资源管理不当</li>
+                    <li>没有制定备用策略</li>
+                </ul>
+
+                <div class="warning-block">
+                    <p>注意：本文介绍的技巧仅适用于2b2t服务器，请勿在其他服务器使用。记住，技术不分对错，但使用方式需要遵守服务器规则。</p>
+                </div>
+
+                <h2>总结</h2>
+                <p>水晶PvP是一个需要持续学习和练习的领域。它不仅考验技术水平，更考验心理素质和战术思维。希望本文能帮助你在2b2t的战斗中更胜一筹。</p>
+            </div>
+
+            <footer class="post-footer">
+                <div class="post-tags">
+                    <span class="tag">2b2t</span>
+                    <span class="tag">PvP</span>
+                    <span class="tag">教程</span>
+                </div>
+                <div class="post-nav">
+                    <a href="client-architecture.html" class="post-nav-next">
+                        下一篇：现代客户端架构设计 →
+                    </a>
+                </div>
+            </footer>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 Waffle's Blog. Built with 💻 and 🎮</p>
+        </div>
+    </footer>
+    <script src="../particles.js"></script>
+    <script src="../matrix-rain.js"></script>
+</body>
+</html> 

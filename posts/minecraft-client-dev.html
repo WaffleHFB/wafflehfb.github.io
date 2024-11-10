@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft 客户端开发入门指南 - Waffle's Blog</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <a href="../index.html"><code>Waffle</code></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../posts.html" class="active">文章</a></li>
+                <li><a href="../projects.html">项目</a></li>
+                <li><a href="../changelog.html">更新日志</a></li>
+                <li><a href="../index.html#about">关于</a></li>
+                <li><a href="https://github.com/yourusername" target="_blank" class="github-link">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container post-detail">
+        <article>
+            <header class="post-header">
+                <div class="post-meta">
+                    <time>2024-03-20</time>
+                    <span class="tag">Minecraft</span>
+                </div>
+                <h1>Minecraft 客户端开发入门指南</h1>
+                <div class="post-info">
+                    <span>阅读时间：15分钟</span>
+                    <span>作者：Waffle</span>
+                </div>
+            </header>
+
+            <div class="post-content">
+                <h2>前言</h2>
+                <p>Minecraft 客户端开发是一个充满挑战和乐趣的领域。本文将从零开始，带你了解客户端开发的基础知识和实践经验。</p>
+
+                <h2>环境搭建</h2>
+                <div class="code-block">
+                    <pre><code>
+// 1. 下载并安装 JDK 8
+// 2. 配置 JAVA_HOME 环境变量
+// 3. 下载 Minecraft 开发工具包
+// 4. 设置 IDE（推荐使用 IntelliJ IDEA）
+                    </code></pre>
+                </div>
+
+                <h2>基础概念</h2>
+                <h3>事件系统</h3>
+                <p>事件系统是客户端开发的核心，它允许我们监听和响应游戏中的各种行为。</p>
+                <div class="code-block">
+                    <pre><code>
+@EventHandler
+public void onUpdate(UpdateEvent event) {
+    // 处理更新事件
+}
+                    </code></pre>
+                </div>
+
+                <h3>渲染系统</h3>
+                <p>了解渲染系统可以帮助我们创建自定义的视觉效果和界面元素。</p>
+
+                <h2>实战案例</h2>
+                <p>让我们通过一个简单的模块开发来实践所学知识。</p>
+                <div class="code-block">
+                    <pre><code>
+public class ExampleModule extends Module {
+    public ExampleModule() {
+        super("Example", Category.COMBAT);
+    }
+
+    @Override
+    public void onEnable() {
+        // 模块启用时的逻辑
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>进阶技巧</h2>
+                <ul>
+                    <li>性能优化</li>
+                    <li>内存管理</li>
+                    <li>多线程处理</li>
+                    <li>反作弊对抗</li>
+                </ul>
+
+                <h2>总结</h2>
+                <p>客户端开发是一个需要持续学习和实践的过程。希望本文能够帮助你开启 Minecraft 客户端开发的旅程。</p>
+            </div>
+
+            <footer class="post-footer">
+                <div class="post-tags">
+                    <span class="tag">Minecraft</span>
+                    <span class="tag">Java</span>
+                    <span class="tag">教程</span>
+                </div>
+                <div class="post-nav">
+                    <a href="java-optimization.html" class="post-nav-next">
+                        下一篇：Java 性能优化实践 →
+                    </a>
+                </div>
+            </footer>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 Waffle's Blog. Built with 💻 and 🎮</p>
+        </div>
+    </footer>
+    <script src="../particles.js"></script>
+    <script src="../matrix-rain.js"></script>
+</body>
+</html> 

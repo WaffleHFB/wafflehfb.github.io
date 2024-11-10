@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java 性能优化实践 - Waffle's Blog</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <a href="../index.html"><code>Waffle</code></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../posts.html" class="active">文章</a></li>
+                <li><a href="../projects.html">项目</a></li>
+                <li><a href="../changelog.html">更新日志</a></li>
+                <li><a href="../about.html">关于</a></li>
+                <li><a href="https://github.com/WaffleHFB" target="_blank" class="github-link">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container post-detail">
+        <article>
+            <header class="post-header">
+                <div class="post-meta">
+                    <time>2024-03-18</time>
+                    <span class="tag">Java</span>
+                    <span class="tag">性能优化</span>
+                </div>
+                <h1>Java 性能优化实践</h1>
+                <div class="post-info">
+                    <span>阅读时间：30分钟</span>
+                    <span>作者：Waffle</span>
+                </div>
+            </header>
+
+            <div class="post-content">
+                <h2>引言</h2>
+                <p>在高性能 Java 应用开发中，性能优化是一个永恒的主题。本文将从实战经验出发，分享一些行之有效的优化技巧。</p>
+
+                <h2>JVM 调优</h2>
+                <h3>内存分配</h3>
+                <div class="code-block">
+                    <pre><code>
+// JVM 参数优化示例
+-Xms4g -Xmx4g // 堆内存初始值和最大值
+-XX:+UseG1GC  // 使用G1垃圾收集器
+-XX:MaxGCPauseMillis=200 // 最大GC停顿时间
+-XX:ParallelGCThreads=8  // 并行GC线程数
+-XX:ConcGCThreads=2      // 并发GC线程数
+-XX:InitiatingHeapOccupancyPercent=45 // 触发标记周期的堆占用率
+
+// 实战案例：客户端内存分配
+public class MemoryConfig {
+    static {
+        // 根据系统内存动态调整
+        long systemMemory = getSystemMemory();
+        if (systemMemory > 8_000_000_000L) { // 8GB以上
+            System.setProperty("java.heap.size", "4g");
+        } else {
+            System.setProperty("java.heap.size", "2g");
+        }
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h3>垃圾回收优化</h3>
+                <p>选择合适的垃圾收集器对性能影响重大：</p>
+                <div class="code-block">
+                    <pre><code>
+// GC日志分析工具
+public class GCAnalyzer {
+    private static final Pattern GC_PATTERN = 
+        Pattern.compile("\\[(\\d+\\.\\d+)s\\].*");
+    
+    public static void analyzeGCLog(String logFile) {
+        List<Double> pauseTimes = new ArrayList<>();
+        // 分析GC停顿时间
+        Files.lines(Paths.get(logFile))
+            .filter(line -> line.contains("[GC"))
+            .map(GCAnalyzer::extractPauseTime)
+            .forEach(pauseTimes::add);
+            
+        // 计算统计信息
+        DoubleSummaryStatistics stats = 
+            pauseTimes.stream().mapToDouble(d -> d)
+                     .summaryStatistics();
+        System.out.printf("平均停顿时间: %.2fms\n", 
+                         stats.getAverage());
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>代码层面优化</h2>
+                <h3>集合类优化</h3>
+                <div class="code-block">
+                    <pre><code>
+// 优化前
+List<String> list = new ArrayList<>();
+for (int i = 0; i < 10000; i++) {
+    list.add("item" + i);
+}
+
+// 优化后
+List<String> list = new ArrayList<>(10000);
+for (int i = 0; i < 10000; i++) {
+    list.add("item" + i);
+}
+
+// 进一步优化：使用StringBuilder
+StringBuilder sb = new StringBuilder(16 * 10000);
+for (int i = 0; i < 10000; i++) {
+    sb.append("item").append(i);
+}
+
+// 自定义集合类优化
+public class FastList<E> extends ArrayList<E> {
+    private static final int DEFAULT_WINDOW = 1000;
+    private final int windowSize;
+    
+    public FastList() {
+        this(DEFAULT_WINDOW);
+    }
+    
+    public FastList(int windowSize) {
+        super(windowSize);
+        this.windowSize = windowSize;
+    }
+    
+    @Override
+    public boolean add(E e) {
+        ensureWindowCapacity();
+        return super.add(e);
+    }
+    
+    private void ensureWindowCapacity() {
+        if (size() >= capacity()) {
+            grow(size() + windowSize);
+        }
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h3>并发优化</h3>
+                <p>合理使用线程池和并发工具：</p>
+                <div class="code-block">
+                    <pre><code>
+// 自定义线程池
+public class OptimizedThreadPool {
+    private final ThreadPoolExecutor executor;
+    private final BlockingQueue<Runnable> workQueue;
+    
+    public OptimizedThreadPool(int coreSize, int maxSize) {
+        workQueue = new LinkedBlockingQueue<>(10000);
+        executor = new ThreadPoolExecutor(
+            coreSize,
+            maxSize,
+            60L, TimeUnit.SECONDS,
+            workQueue,
+            new ThreadFactory() {
+                private final AtomicInteger counter = 
+                    new AtomicInteger(1);
+                @Override
+                public Thread newThread(Runnable r) {
+                    Thread t = new Thread(r);
+                    t.setName("Worker-" + counter.getAndIncrement());
+                    t.setDaemon(true);
+                    return t;
+                }
+            },
+            new ThreadPoolExecutor.CallerRunsPolicy()
+        );
+    }
+    
+    public void execute(Runnable task) {
+        executor.execute(() -> {
+            try {
+                task.run();
+            } catch (Exception e) {
+                handleException(e);
+            }
+        });
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>缓存优化</h2>
+                <h3>多级缓存</h3>
+                <div class="code-block">
+                    <pre><code>
+public class CacheManager<K, V> {
+    private final LoadingCache<K, V> firstLevelCache;
+    private final Cache<K, V> secondLevelCache;
+    
+    public CacheManager(CacheLoader<K, V> loader) {
+        firstLevelCache = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterWrite(5, TimeUnit.MINUTES)
+            .build(loader);
+            
+        secondLevelCache = CacheBuilder.newBuilder()
+            .maximumSize(10000)
+            .expireAfterWrite(30, TimeUnit.MINUTES)
+            .build();
+    }
+    
+    public V get(K key) throws ExecutionException {
+        V value = firstLevelCache.getIfPresent(key);
+        if (value == null) {
+            value = secondLevelCache.getIfPresent(key);
+            if (value != null) {
+                firstLevelCache.put(key, value);
+            }
+        }
+        return value != null ? value : 
+               firstLevelCache.get(key);
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>实战案例</h2>
+                <h3>游戏客户端优化</h3>
+                <div class="code-block">
+                    <pre><code>
+// 渲染优化
+public class RenderOptimizer {
+    private static final int BATCH_SIZE = 1000;
+    private final Queue<RenderTask> taskQueue;
+    private final ExecutorService renderThread;
+    
+    public void submitRenderTask(RenderTask task) {
+        if (taskQueue.size() >= BATCH_SIZE) {
+            processBatch();
+        }
+        taskQueue.offer(task);
+    }
+    
+    private void processBatch() {
+        List<RenderTask> batch = new ArrayList<>(BATCH_SIZE);
+        taskQueue.drainTo(batch, BATCH_SIZE);
+        
+        // 批量处理渲染任务
+        renderThread.execute(() -> {
+            batch.sort(RenderTask.COMPARATOR);
+            for (RenderTask task : batch) {
+                task.render();
+            }
+        });
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>性能监控</h2>
+                <h3>监控指标</h3>
+                <ul>
+                    <li>CPU 使用率</li>
+                    <li>内存占用</li>
+                    <li>GC 频率和时间</li>
+                    <li>线程状态</li>
+                    <li>响应时间</li>
+                </ul>
+
+                <div class="code-block">
+                    <pre><code>
+public class PerformanceMonitor {
+    private static final ScheduledExecutorService scheduler = 
+        Executors.newScheduledThreadPool(1);
+        
+    public static void startMonitoring() {
+        scheduler.scheduleAtFixedRate(() -> {
+            // 收集性能指标
+            MemoryMXBean memoryBean = 
+                ManagementFactory.getMemoryMXBean();
+            MemoryUsage heapUsage = 
+                memoryBean.getHeapMemoryUsage();
+            
+            // 记录到日志
+            log.info("Heap used: {}MB, Max: {}MB", 
+                    heapUsage.getUsed() / 1024 / 1024,
+                    heapUsage.getMax() / 1024 / 1024);
+        }, 0, 1, TimeUnit.MINUTES);
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>最佳实践</h2>
+                <ul>
+                    <li>先监控，后优化</li>
+                    <li>找到真正的瓶颈</li>
+                    <li>优化最耗时的部分</li>
+                    <li>保持代码可维护性</li>
+                    <li>做好性能测试</li>
+                </ul>
+
+                <div class="warning-block">
+                    <p>注意：过早优化是万恶之源。要在实际性能问题出现时再进行针对性优化。</p>
+                </div>
+
+                <h2>总结</h2>
+                <p>性能优化是一个持续的过程，需要在实践中不断积累经验。本文介绍的这些技巧都来自实际项目，希望能对你有所帮助。</p>
+            </div>
+
+            <footer class="post-footer">
+                <div class="post-tags">
+                    <span class="tag">Java</span>
+                    <span class="tag">性能优化</span>
+                    <span class="tag">JVM</span>
+                </div>
+                <div class="post-nav">
+                    <a href="minecraft-client-dev.html" class="post-nav-next">
+                        下一篇：Minecraft 客户端开发入门指南 →
+                    </a>
+                </div>
+            </footer>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 Waffle's Blog. Built with 💻 and 🎮</p>
+        </div>
+    </footer>
+    <script src="../particles.js"></script>
+    <script src="../matrix-rain.js"></script>
+</body>
+</html> 

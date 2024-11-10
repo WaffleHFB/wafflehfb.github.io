@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户端安全性设计 - Waffle's Blog</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <a href="../index.html"><code>Waffle</code></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../posts.html" class="active">文章</a></li>
+                <li><a href="../projects.html">项目</a></li>
+                <li><a href="../changelog.html">更新日志</a></li>
+                <li><a href="../index.html#about">关于</a></li>
+                <li><a href="https://github.com/yourusername" target="_blank" class="github-link">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container post-detail">
+        <article>
+            <header class="post-header">
+                <div class="post-meta">
+                    <time>2024-03-05</time>
+                    <span class="tag">安全</span>
+                </div>
+                <h1>客户端安全性设计</h1>
+                <div class="post-info">
+                    <span>阅读时间：20分钟</span>
+                    <span>作者：Waffle</span>
+                </div>
+            </header>
+
+            <div class="post-content">
+                <h2>引言</h2>
+                <p>客户端安全性是保护用户数据和知识产权的关键。本文将介绍客户端程序的安全性设计方案。</p>
+
+                <h2>代码保护</h2>
+                <h3>混淆技术</h3>
+                <div class="code-block">
+                    <pre><code>
+// 使用 ProGuard 配置示例
+-keep class com.example.client.api.* { *; }
+-keepclassmembers class * {
+    @com.example.annotation.* *;
+}
+                    </code></pre>
+                </div>
+
+                <h3>字符串加密</h3>
+                <div class="code-block">
+                    <pre><code>
+public class StringEncryption {
+    private static String decrypt(String encrypted) {
+        // 解密逻辑
+        return decrypted;
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>反调试机制</h2>
+                <h3>基础检测</h3>
+                <ul>
+                    <li>JVM 参数检测</li>
+                    <li>调试器检测</li>
+                    <li>环境检测</li>
+                </ul>
+
+                <h3>高级防护</h3>
+                <div class="code-block">
+                    <pre><code>
+public class SecurityCheck {
+    public static boolean isDebuggerPresent() {
+        // 检测逻辑
+    }
+    
+    public static boolean checkIntegrity() {
+        // 完整性校验
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>数据保护</h2>
+                <h3>配置加密</h3>
+                <p>敏感配置数据的加密存储：</p>
+                <div class="code-block">
+                    <pre><code>
+public class ConfigEncryption {
+    private static final byte[] KEY = new byte[32];
+    
+    public static String encryptConfig(String data) {
+        // 加密逻辑
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>网络安全</h2>
+                <ul>
+                    <li>数据包加密</li>
+                    <li>防重放攻击</li>
+                    <li>会话管理</li>
+                </ul>
+
+                <h2>最佳实践</h2>
+                <ul>
+                    <li>定期更新安全策略</li>
+                    <li>多层防护机制</li>
+                    <li>日志监控</li>
+                </ul>
+
+                <h2>总结</h2>
+                <p>安全性设计是一个持续的过程，需要不断更新和完善防护措施。</p>
+            </div>
+
+            <footer class="post-footer">
+                <div class="post-tags">
+                    <span class="tag">安全</span>
+                    <span class="tag">加密</span>
+                    <span class="tag">防护</span>
+                </div>
+                <div class="post-nav">
+                    <a href="hypixel-sweat.html" class="post-nav-next">
+                        下一篇：Hypixel 出汗怪速通指南 →
+                    </a>
+                </div>
+            </footer>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 Waffle's Blog. Built with 💻 and 🎮</p>
+        </div>
+    </footer>
+    <script src="../particles.js"></script>
+    <script src="../matrix-rain.js"></script>
+</body>
+</html> 

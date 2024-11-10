@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>现代客户端架构设计 - Waffle's Blog</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <a href="../index.html"><code>Waffle</code></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../posts.html" class="active">文章</a></li>
+                <li><a href="../projects.html">项目</a></li>
+                <li><a href="../changelog.html">更新日志</a></li>
+                <li><a href="../about.html">关于</a></li>
+                <li><a href="https://github.com/WaffleHFB" target="_blank" class="github-link">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container post-detail">
+        <article>
+            <header class="post-header">
+                <div class="post-meta">
+                    <time>2024-03-10</time>
+                    <span class="tag">开发</span>
+                    <span class="tag">架构</span>
+                </div>
+                <h1>现代客户端架构设计</h1>
+                <div class="post-info">
+                    <span>阅读时间：35分钟</span>
+                    <span>作者：Waffle</span>
+                </div>
+            </header>
+
+            <div class="post-content">
+                <h2>前言</h2>
+                <p>一个优秀的客户端架构不仅要考虑性能和可维护性，还要考虑到未来的扩展性。本文将从实战经验出发，深入探讨现代客户端的架构设计。</p>
+
+                <h2>核心架构</h2>
+                <h3>模块化设计</h3>
+                <div class="code-block">
+                    <pre><code>
+// 基础模块接口
+public interface IModule {
+    void onEnable();
+    void onDisable();
+    void onTick();
+    
+    String getName();
+    Category getCategory();
+    ModuleInfo getInfo();
+}
+
+// 模块基类
+public abstract class Module implements IModule {
+    @Getter private final String name;
+    @Getter private final Category category;
+    @Getter private boolean enabled;
+    
+    @Getter private final List<Setting<?>> settings = new ArrayList<>();
+    @Getter private final EventManager eventManager;
+    
+    protected Module(String name, Category category) {
+        this.name = name;
+        this.category = category;
+        this.loadSettings();
+    }
+    
+    protected void registerSetting(Setting<?> setting) {
+        settings.add(setting);
+    }
+}
+
+// 模块管理器
+public class ModuleManager {
+    private final Map<String, Module> modules = new HashMap<>();
+    private final EventBus eventBus;
+    
+    public void loadModule(Module module) {
+        modules.put(module.getName(), module);
+        eventBus.register(module);
+    }
+    
+    public void enableModule(String name) {
+        Module module = modules.get(name);
+        if (module != null && !module.isEnabled()) {
+            module.onEnable();
+        }
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h3>事件系统</h3>
+                <p>一个高效的事件系统是客户端的核心：</p>
+                <div class="code-block">
+                    <pre><code>
+// 事件总线
+public class EventBus {
+    private final Map<Class<?>, List<EventHandler>> handlers = new HashMap<>();
+    
+    public void register(Object listener) {
+        for (Method method : listener.getClass().getDeclaredMethods()) {
+            if (method.isAnnotationPresent(EventHandler.class)) {
+                registerHandler(method, listener);
+            }
+        }
+    }
+    
+    public void post(Event event) {
+        List<EventHandler> eventHandlers = handlers.get(event.getClass());
+        if (eventHandlers != null) {
+            for (EventHandler handler : eventHandlers) {
+                if (event.isCancelled() && !handler.ignoreCancelled()) {
+                    continue;
+                }
+                handler.invoke(event);
+            }
+        }
+    }
+}
+
+// 优先级系统
+public enum Priority {
+    LOWEST(0),
+    LOW(1),
+    NORMAL(2),
+    HIGH(3),
+    HIGHEST(4);
+    
+    private final int value;
+    
+    Priority(int value) {
+        this.value = value;
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>配置系统</h2>
+                <h3>序列化设计</h3>
+                <div class="code-block">
+                    <pre><code>
+// 配置序列化
+public class ConfigManager {
+    private final File configDir;
+    private final Gson gson;
+    
+    public void saveModule(Module module) {
+        Map<String, Object> config = new HashMap<>();
+        for (Setting<?> setting : module.getSettings()) {
+            config.put(setting.getName(), setting.getValue());
+        }
+        
+        String json = gson.toJson(config);
+        Files.write(
+            configDir.toPath()
+                .resolve(module.getName() + ".json"),
+            json.getBytes()
+        );
+    }
+    
+    public void loadModule(Module module) {
+        Path configPath = configDir.toPath()
+            .resolve(module.getName() + ".json");
+            
+        if (Files.exists(configPath)) {
+            String json = new String(Files.readAllBytes(configPath));
+            Map<String, Object> config = gson.fromJson(
+                json, 
+                new TypeToken<Map<String, Object>>(){}.getType()
+            );
+            
+            for (Setting<?> setting : module.getSettings()) {
+                if (config.containsKey(setting.getName())) {
+                    setting.setValue(config.get(setting.getName()));
+                }
+            }
+        }
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>性能优化</h2>
+                <h3>内存管理</h3>
+                <p>合理的内存管理对客户端性能至关重要：</p>
+                <div class="code-block">
+                    <pre><code>
+// 对象池
+public class ObjectPool<T> {
+    private final Queue<T> pool;
+    private final Supplier<T> factory;
+    private final Consumer<T> reset;
+    
+    public T obtain() {
+        T obj = pool.poll();
+        if (obj == null) {
+            obj = factory.get();
+        }
+        return obj;
+    }
+    
+    public void recycle(T obj) {
+        reset.accept(obj);
+        pool.offer(obj);
+    }
+}
+
+// 缓存系统
+public class CacheManager {
+    private final Map<String, Cache<?>> caches = new HashMap<>();
+    
+    public <T> void putCache(String key, T value, long ttl) {
+        caches.put(key, new Cache<>(value, ttl));
+    }
+    
+    public <T> Optional<T> getCache(String key) {
+        Cache<?> cache = caches.get(key);
+        if (cache != null && !cache.isExpired()) {
+            return Optional.of((T) cache.getValue());
+        }
+        return Optional.empty();
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>渲染系统</h2>
+                <h3>渲染优化</h3>
+                <div class="code-block">
+                    <pre><code>
+// VBO 管理器
+public class VBOManager {
+    private final Map<String, Integer> vbos = new HashMap<>();
+    
+    public void createVBO(String name, float[] data) {
+        int vboId = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, 
+                         BufferUtils.createFloatBuffer(data), 
+                         GL15.GL_STATIC_DRAW);
+        vbos.put(name, vboId);
+    }
+    
+    public void render(String name) {
+        Integer vboId = vbos.get(name);
+        if (vboId != null) {
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
+            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6);
+        }
+    }
+}
+
+// 批量渲染
+public class BatchRenderer {
+    private final List<RenderCommand> commands = new ArrayList<>();
+    
+    public void submit(RenderCommand cmd) {
+        commands.add(cmd);
+    }
+    
+    public void flush() {
+        commands.sort((a, b) -> 
+            Float.compare(a.getLayer(), b.getLayer())
+        );
+        
+        for (RenderCommand cmd : commands) {
+            cmd.execute();
+        }
+        commands.clear();
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>设计模式应用</h2>
+                <h3>常用模式</h3>
+                <ul>
+                    <li>观察者模式（事件系统）</li>
+                    <li>单例模式（管理器类）</li>
+                    <li>工厂模式（模块创建）</li>
+                    <li>策略模式（渲染策略）</li>
+                    <li>建造者模式（配置构建）</li>
+                </ul>
+
+                <div class="code-block">
+                    <pre><code>
+// 建造者模式示例
+public class ModuleBuilder {
+    private String name;
+    private Category category;
+    private List<Setting<?>> settings = new ArrayList<>();
+    
+    public ModuleBuilder name(String name) {
+        this.name = name;
+        return this;
+    }
+    
+    public ModuleBuilder category(Category category) {
+        this.category = category;
+        return this;
+    }
+    
+    public ModuleBuilder addSetting(Setting<?> setting) {
+        settings.add(setting);
+        return this;
+    }
+    
+    public Module build() {
+        Module module = new Module(name, category) {
+            @Override
+            public void onEnable() {
+                // 实现逻辑
+            }
+        };
+        
+        settings.forEach(module::registerSetting);
+        return module;
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>最佳实践</h2>
+                <ul>
+                    <li>模块之间保持低耦合</li>
+                    <li>合理使用设计模式</li>
+                    <li>注重性能优化</li>
+                    <li>保持代码可维护性</li>
+                    <li>做好异常处理</li>
+                    <li>编写单元测试</li>
+                </ul>
+
+                <div class="warning-block">
+                    <p>注意：好的架构是在实践中不断优化的结果，没有一劳永逸的方案。要根据实际需求灵活调整。</p>
+                </div>
+
+                <h2>总结</h2>
+                <p>一个优秀的客户端架构需要在性能、可维护性和扩展性之间找到平衡。通过合理的模块化设计、高效的事件系统和良好的性能优化，我们可以构建出一个稳定且高效的客户端。</p>
+            </div>
+
+            <footer class="post-footer">
+                <div class="post-tags">
+                    <span class="tag">架构</span>
+                    <span class="tag">设计模式</span>
+                    <span class="tag">性能优化</span>
+                </div>
+                <div class="post-nav">
+                    <a href="client-security.html" class="post-nav-next">
+                        下一篇：客户端安全性设计 →
+                    </a>
+                </div>
+            </footer>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 Waffle's Blog. Built with 💻 and 🎮</p>
+        </div>
+    </footer>
+    <script src="../particles.js"></script>
+    <script src="../matrix-rain.js"></script>
+</body>
+</html> 

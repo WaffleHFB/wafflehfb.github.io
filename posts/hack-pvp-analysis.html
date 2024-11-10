@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>从技术角度分析 Hack PvP - Waffle's Blog</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <a href="../index.html"><code>Waffle</code></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../posts.html" class="active">文章</a></li>
+                <li><a href="../projects.html">项目</a></li>
+                <li><a href="../changelog.html">更新日志</a></li>
+                <li><a href="../about.html">关于</a></li>
+                <li><a href="https://github.com/WaffleHFB" target="_blank" class="github-link">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container post-detail">
+        <article>
+            <header class="post-header">
+                <div class="post-meta">
+                    <time>2024-03-17</time>
+                    <span class="tag">Hack</span>
+                    <span class="tag">PvP</span>
+                </div>
+                <h1>从技术角度分析 Hack PvP</h1>
+                <div class="post-info">
+                    <span>阅读时间：25分钟</span>
+                    <span>作者：Waffle</span>
+                </div>
+            </header>
+
+            <div class="post-content">
+                <h2>前言</h2>
+                <p>当你在和一个Hacker对战时，你其实是在和一段代码战斗。或者更准确地说，你在和一堆数学公式和算法打交道（笑）。本文将从技术角度深入分析各类Hack模块的原理。</p>
+
+                <h2>基础原理</h2>
+                <div class="code-block">
+                    <pre><code>
+// 基本模块结构
+public class KillAura extends Module {
+    // 我们真的需要这么多设置吗？当然！
+    @Value private double range = 3.0;        // 范围
+    @Value private int delay = 50;            // 延迟
+    @Value private boolean walls = false;      // 透视
+    @Value private float fov = 180.0f;        // 视角
+    @Value private boolean rotations = true;   // 自动瞄准
+    @Value private boolean autoBlock = true;   // 自动格挡
+    @Value private String targetMode = "Single"; // 目标模式
+    
+    @EventHandler
+    public void onUpdate(UpdateEvent event) {
+        // 战斗逻辑（相信我，这里的逻辑比你想象的复杂多了）
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h2>核心技术</h2>
+                <h3>目标选择算法</h3>
+                <p>一个"智能"的目标选择算法需要考虑：</p>
+                <ul>
+                    <li>距离优先级（但不是最近就一定是最优）</li>
+                    <li>装备评分（全钻石的优先级显然更高）</li>
+                    <li>威胁等级（手持末影水晶的玩家威胁等级+10）</li>
+                    <li>历史记录（被打过的玩家优先级+5）</li>
+                    <li>队友检测（除非你想被踢出队伍）</li>
+                </ul>
+
+                <div class="code-block">
+                    <pre><code>
+private Entity getBestTarget() {
+    return mc.world.getEntities().stream()
+        .filter(this::isValid)
+        .map(entity -> new TargetInfo(entity, calculateThreat(entity)))
+        .sorted(Comparator.comparingDouble(TargetInfo::getThreatLevel)
+                         .reversed())
+        .map(TargetInfo::getEntity)
+        .findFirst()
+        .orElse(null);
+}
+
+private double calculateThreat(Entity entity) {
+    double threat = 0;
+    // 基础距离评分
+    threat += (1.0 / mc.player.distanceTo(entity)) * 10;
+    // 装备评分
+    threat += getArmorRating(entity) * 2;
+    // 手持物品评分
+    threat += getHeldItemDanger(entity) * 3;
+    // 历史记录评分
+    threat += getPreviousEncounters(entity) * 1.5;
+    return threat;
+}
+                    </code></pre>
+                </div>
+
+                <h3>预判系统</h3>
+                <p>一个好的预判系统是制胜的关键（当然，除非对手也在用）：</p>
+                <ul>
+                    <li>速度向量分析（基础物理学知识的胜利）</li>
+                    <li>加速度计算（包括各种药水效果）</li>
+                    <li>跳跃预测（别忘了检查信标效果）</li>
+                    <li>路径规划（A*算法的老朋友）</li>
+                </ul>
+
+                <div class="code-block">
+                    <pre><code>
+private Vec3d predictPosition(Entity target, int ticks) {
+    Vec3d velocity = new Vec3d(
+        target.getVelocity().x,
+        target.getVelocity().y,
+        target.getVelocity().z
+    );
+    
+    // 考虑重力
+    velocity = velocity.add(0, -0.08, 0);
+    
+    // 考虑空气阻力
+    velocity = velocity.multiply(0.98);
+    
+    return target.getPos().add(
+        velocity.multiply(ticks)
+    );
+}
+                    </code></pre>
+                </div>
+
+                <h2>进阶功能</h2>
+                <h3>自动格挡</h3>
+                <p>格挡时机的选择是一门艺术：</p>
+                <div class="code-block">
+                    <pre><code>
+@EventHandler
+public void onAttack(AttackEvent event) {
+    // 判断是否需要格挡
+    if (shouldBlock()) {
+        // 发包时机的艺术
+        mc.player.networkHandler.sendPacket(
+            new PlayerActionC2SPacket(
+                Action.START_BLOCKING,
+                mc.player.getBlockPos(),
+                Direction.DOWN
+            )
+        );
+        // 等待最佳时机
+        Timer.sleep(randomDelay(50, 80));
+        // 取消格挡
+        stopBlocking();
+    }
+}
+                    </code></pre>
+                </div>
+
+                <h3>智能旋转</h3>
+                <p>如何让旋转看起来更"自然"：</p>
+                <ul>
+                    <li>GCD修正（感谢Minecraft的奇妙机制）</li>
+                    <li>随机化处理（因为人类不是机器人）</li>
+                    <li>平滑处理（除非你想被反作弊盯上）</li>
+                </ul>
+
+                <h2>反作弊对抗</h2>
+                <div class="code-block">
+                    <pre><code>
+// 基础反作弊绕过
+private void bypass() {
+    // 随机化数值
+    randomizeValues();
+    // 添加人性化处理
+    addHumanization();
+    // 模拟网络延迟
+    simulateLatency();
+    // 检查服务器心跳
+    checkServerTick();
+    // 动态调整参数
+    adaptParameters();
+}
+                    </code></pre>
+                </div>
+
+                <h2>有趣的事实</h2>
+                <ul>
+                    <li>大多数玩家其实在和数学公式战斗</li>
+                    <li>有些Hack的代码比游戏本身还复杂</li>
+                    <li>反作弊和Hack就像猫鼠游戏</li>
+                    <li>有时候最简单的Hack反而最难被检测</li>
+                    <li>写Hack的人往往比用Hack的人更懂游戏机制</li>
+                </ul>
+
+                <div class="warning-block">
+                    <p>注意：本文纯粹是从技术角度分析，不鼓励在正常游戏中使用作弊。毕竟，真正的乐趣在于技术的研究和游戏本身。</p>
+                </div>
+
+                <h2>总结</h2>
+                <p>了解Hack的工作原理不仅可以帮助我们：</p>
+                <ul>
+                    <li>开发更好的反作弊系统</li>
+                    <li>提升正常PvP技巧（知己知彼）</li>
+                    <li>理解游戏机制</li>
+                    <li>欣赏代码之美（虽然用途不太优雅）</li>
+                </ul>
+            </div>
+
+            <footer class="post-footer">
+                <div class="post-tags">
+                    <span class="tag">Hack</span>
+                    <span class="tag">PvP</span>
+                    <span class="tag">技术分析</span>
+                </div>
+                <div class="post-nav">
+                    <a href="client-security.html" class="post-nav-next">
+                        下一篇：客户端安全性设计 →
+                    </a>
+                </div>
+            </footer>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 Waffle's Blog. Built with 💻 and 🎮</p>
+        </div>
+    </footer>
+    <script src="../particles.js"></script>
+    <script src="../matrix-rain.js"></script>
+</body>
+</html> 
