@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Waffle's Blog</title>
+    <title>Waffle's Blog - Java Developer & Security Researcher</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -25,6 +25,7 @@
 
     <main>
         <section class="hero container">
+            <!-- 终端界面 -->
             <div class="terminal" data-tilt>
                 <div class="terminal-header">
                     <span class="dot"></span>
@@ -33,25 +34,6 @@
                 </div>
                 <div class="terminal-body">
                     <!-- 终端内容由 terminal-emulator.js 生成 -->
-                </div>
-            </div>
-
-            <div class="system-info">
-                <div class="info-item">
-                    <span class="info-label">系统</span>
-                    <span class="info-value" id="systemInfo">加载中...</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">CPU</span>
-                    <span class="info-value" id="cpuInfo">加载中...</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">内存</span>
-                    <span class="info-value" id="memoryInfo">加载中...</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">GPU</span>
-                    <span class="info-value" id="gpuInfo">加载中...</span>
                 </div>
             </div>
         </section>
@@ -63,7 +45,9 @@
         </div>
     </footer>
 
+    <!-- 核心脚本 -->
     <script src="terminal-emulator.js"></script>
     <script src="system-monitor.js"></script>
+    <script src="glow-effect.js"></script>
 </body>
 </html> 
